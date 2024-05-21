@@ -26,12 +26,12 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 20
-          cache: 'yarn'
+          cache: 'npm'
 
       - name: Check commit message convention
         run: |
-          yarn add @commitlint/cli @commitlint/config-conventional -D
-          yarn commitlint --from ${{ github.event.pull_request.head.sha }}~${{ github.event.pull_request.commits }} --to ${{ github.event.pull_request.head.sha }} --verbose
+          npm install @commitlint/cli @commitlint/config-conventional -D
+          npm run commitlint --from ${{ github.event.pull_request.head.sha }}~${{ github.event.pull_request.commits }} --to ${{ github.event.pull_request.head.sha }} --verbose
 
       - name: Get changed files
         id: changed-files
@@ -67,7 +67,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 20
-          cache: 'yarn'
+          cache: 'npm'
 
       - name: Add quotes
         id: add-quotes
@@ -77,7 +77,7 @@ jobs:
         shell: bash
 
       - name: Install dependencies
-        run: yarn --frozen-lockfile
+        run: npm ci
 
       - name: Lint check
         run: |
