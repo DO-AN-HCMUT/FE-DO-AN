@@ -1,0 +1,84 @@
+name: Pull request
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - dev
+
+jobs:
+  check-modified-files-count:
+    outputs:
+      count: ${{ steps.changed-files.outputs.all_changed_files_count }}
+      modified_files: ${{ steps.changed-files.outputs.all_changed_files }}
+    permissions:
+      actions: 'write'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: 'yarn'
+
+      - name: Check commit message convention
+        run: |
+          yarn add @commitlint/cli @commitlint/config-conventional -D
+          yarn commitlint --from ${{ github.event.pull_request.head.sha }}~${{ github.event.pull_request.commits }} --to ${{ github.event.pull_request.head.sha }} --verbose
+
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v41
+        with:
+          json: true
+          write_output_files: true
+          files: |
+            src/**/*
+          files_ignore: |
+            **/(*.jpg|*.png|*.gif|*.svg|*.jpeg|*.pneg)
+
+      - name: Check changed files
+        run: |
+          if [ ${{ steps.changed-files.outputs.all_modified_files_count }} -gt 15 ]; then
+            echo "Too many files changed. One PR should only change <= 15 files."
+            exit 1
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  lint:
+    runs-on: ubuntu-latest
+    needs: check-modified-files-count
+    if: needs.check-modified-files-count.outputs.count != '0'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: 'yarn'
+
+      - name: Add quotes
+        id: add-quotes
+        run: |
+          modified_files_with_quotes=$(echo ${{ needs.check-modified-files-count.outputs.modified_files }})
+          echo modified_files=$modified_files_with_quotes | sed 's/ //g' | sed 's/\[//g' | sed 's/\]//g' | sed 's/,/ /g' >> "$GITHUB_OUTPUT"
+        shell: bash
+
+      - name: Install dependencies
+        run: yarn --frozen-lockfile
+
+      - name: Lint check
+        run: |
+          yarn eslint ${{ steps.add-quotes.outputs.modified_files }}
