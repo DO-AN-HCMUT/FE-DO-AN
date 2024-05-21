@@ -31,7 +31,7 @@ jobs:
       - name: Check commit message convention
         run: |
           npm install @commitlint/cli @commitlint/config-conventional -D
-          npm run commitlint --from ${{ github.event.pull_request.head.sha }}~${{ github.event.pull_request.commits }} --to ${{ github.event.pull_request.head.sha }} --verbose
+          npm commitlint --from ${{ github.event.pull_request.head.sha }}~${{ github.event.pull_request.commits }} --to ${{ github.event.pull_request.head.sha }} --verbose
 
       - name: Get changed files
         id: changed-files
