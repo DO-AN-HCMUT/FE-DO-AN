@@ -4,6 +4,7 @@ import Image from 'next/image';
 
 import Button from '@/components/Button';
 import TextInput from '@/components/TextInput';
+
 import AuthType from '@/types/authType';
 
 type AuthModalProps = {
@@ -21,10 +22,10 @@ export default function AuthModal({ type }: AuthModalProps) {
       </div>
       <div className='flex w-3/5 flex-col items-stretch justify-between'>
         <div className='flex grow flex-col justify-center'>
-          <TextInput className='mb-8' placeholder='Email' value='' onChange={() => {}} type='text' />
-          <TextInput placeholder='Password' value='' onChange={() => {}} type='password' />
+          <TextInput className='mb-8' placeholder='Email' value='' onInput={() => {}} type='text' />
+          <TextInput placeholder='Password' value='' onInput={() => {}} type='password' />
           {type === AuthType.SIGN_UP && (
-            <TextInput className='mt-8' placeholder='Confirm Password' value='' onChange={() => {}} type='password' />
+            <TextInput className='mt-8' placeholder='Confirm Password' value='' onInput={() => {}} type='password' />
           )}
         </div>
         <div className='self-end'>
