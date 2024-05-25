@@ -5,7 +5,7 @@ type TextInputProps = {
   placeholder?: string;
   value: string;
   className?: string;
-  onInput: () => void;
+  onInput: (input: string) => void;
 };
 
 export default function TextInput({ type = 'text', placeholder, onInput, value, className }: TextInputProps) {
@@ -14,5 +14,13 @@ export default function TextInput({ type = 'text', placeholder, onInput, value, 
     className,
   );
 
-  return <input value={value} onInput={onInput} placeholder={placeholder} className={inputClass} type={type} />;
+  return (
+    <input
+      value={value}
+      onInput={(event) => onInput(event.currentTarget.value)}
+      placeholder={placeholder}
+      className={inputClass}
+      type={type}
+    />
+  );
 }
