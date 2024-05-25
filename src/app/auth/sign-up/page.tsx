@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 
 import Button from '@/components/Button';
@@ -8,6 +9,8 @@ import TextInput from '@/components/TextInput';
 
 export default function SignUp() {
   const [input, setInput] = useState({ email: '', password: '', confirmPassword: '' });
+
+  const router = useRouter();
 
   const handleSignUp = useCallback(() => {
     /* eslint-disable-next-line no-console */
@@ -44,7 +47,13 @@ export default function SignUp() {
           />
         </div>
         <div className='self-end'>
-          <Button type='neutral-positive' className='me-4' onClick={() => {}}>
+          <Button
+            type='neutral-positive'
+            className='me-4'
+            onClick={() => {
+              router.push('/auth/sign-in');
+            }}
+          >
             Sign In
           </Button>
           <Button type='positive' onClick={handleSignUp}>
