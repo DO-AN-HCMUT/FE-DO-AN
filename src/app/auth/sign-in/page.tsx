@@ -2,20 +2,34 @@
 
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useContext } from 'react';
 
 import Button from '@/components/Button';
 import TextInput from '@/components/TextInput';
+import AuthContext from '@/contexts/auth';
 
 export default function SignIn() {
   const [input, setInput] = useState({ email: '', password: '' });
+  const [errorText, setErrorText] = useState('');
 
   const router = useRouter();
+  const { signIn } = useContext(AuthContext);
 
-  const handleSignIn = useCallback(() => {
-    /* eslint-disable-next-line no-console */
-    console.log(input);
-  }, [input]);
+  const handleSignIn = useCallback(async () => {
+    if (!input.email || !input.password) {
+      setErrorText('Please fill in all fields');
+      return;
+    }
+
+    try {
+      await signIn(input);
+      router.push('/');
+    } catch (e: any) {
+      console.error(e);
+      setErrorText(e.response.data.msg);
+      // TODO: Handle error message from API
+    }
+  }, [signIn, input, router]);
 
   return (
     <>
@@ -42,20 +56,23 @@ export default function SignIn() {
             }}
             type='password'
           />
+          {errorText && <p className='mt-2 italic text-red'>{errorText}</p>}
         </div>
         <div className='self-end'>
-          <Button
-            type='neutral-positive'
-            className='me-4'
-            onClick={() => {
-              router.push('/auth/sign-up');
-            }}
-          >
-            Sign Up
-          </Button>
-          <Button type='positive' onClick={handleSignIn}>
-            Sign In
-          </Button>
+          <div>
+            <Button
+              type='neutral-positive'
+              className='me-4'
+              onClick={() => {
+                router.push('/auth/sign-up');
+              }}
+            >
+              Sign Up
+            </Button>
+            <Button type='positive' onClick={handleSignIn}>
+              Sign In
+            </Button>
+          </div>
         </div>
       </div>
     </>

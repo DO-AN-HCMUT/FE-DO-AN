@@ -2,10 +2,18 @@
 
 'use client';
 
+import { redirect } from 'next/navigation';
+
 import Header from '@/components/Header';
 import SideBar from '@/components/SideBar';
+import storage from '@/utils/storage';
 
 export default function MePage() {
+  // TODO: Find a better way to implement auth checking
+  if (!storage.getItem('token')) {
+    redirect('/auth/sign-in');
+  }
+
   return (
     <div className='h-screen'>
       {/* HEADER */}

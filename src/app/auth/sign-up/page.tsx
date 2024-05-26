@@ -2,20 +2,38 @@
 
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useCallback, useState } from 'react';
+import { useCallback, useContext, useState } from 'react';
 
 import Button from '@/components/Button';
 import TextInput from '@/components/TextInput';
+import AuthContext from '@/contexts/auth';
 
 export default function SignUp() {
   const [input, setInput] = useState({ email: '', password: '', confirmPassword: '' });
+  const [errorText, setErrorText] = useState('');
 
   const router = useRouter();
+  const { signUp } = useContext(AuthContext);
 
-  const handleSignUp = useCallback(() => {
-    /* eslint-disable-next-line no-console */
-    console.log(input);
-  }, [input]);
+  const handleSignUp = useCallback(async () => {
+    if (!input.email || !input.password || !input.confirmPassword) {
+      setErrorText('Please fill in all fields');
+      return;
+    }
+
+    if (input.password !== input.confirmPassword) {
+      setErrorText('Passwords do not match');
+      return;
+    }
+
+    try {
+      await signUp(input);
+      router.push('/');
+    } catch (e) {
+      console.error(e);
+      // TODO: Handle error message from API
+    }
+  }, [input, router, signUp]);
 
   return (
     <>
@@ -45,6 +63,7 @@ export default function SignUp() {
             onInput={(confirmPassword) => setInput({ ...input, confirmPassword })}
             type='password'
           />
+          {errorText && <p className='mt-2 italic text-red'>{errorText}</p>}
         </div>
         <div className='self-end'>
           <Button
