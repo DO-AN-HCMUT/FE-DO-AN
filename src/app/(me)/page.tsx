@@ -3,16 +3,24 @@
 'use client';
 
 import { redirect } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 import Header from '@/components/Header';
 import SideBar from '@/components/SideBar';
 import storage from '@/utils/storage';
 
 export default function MePage() {
+  const [isAuthStatusReady, setIsAuthStatusReady] = useState(false);
+
   // TODO: Find a better way to implement auth checking
-  if (!storage.getItem('token')) {
-    redirect('/auth/sign-in');
-  }
+  useEffect(() => {
+    if (!storage.getItem('token')) {
+      redirect('/auth/sign-in');
+    }
+    setIsAuthStatusReady(true);
+  }, []);
+
+  if (!isAuthStatusReady) return null;
 
   return (
     <div className='h-screen'>
