@@ -29,8 +29,9 @@ export default function SignUp() {
     try {
       await signUp(input);
       router.push('/');
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
+      setErrorText(e.response?.data?.msg);
       // TODO: Handle error message from API
     }
   }, [input, router, signUp]);

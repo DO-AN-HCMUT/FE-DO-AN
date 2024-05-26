@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { ReactNode, createContext, useCallback, useMemo, useState } from 'react';
 
 import { authService } from '@/services';
@@ -17,6 +18,8 @@ type AuthContextProps = {
 const AuthContext = createContext<AuthContextProps>({} as AuthContextProps);
 
 export function AuthContextProvider({ children }: { children: ReactNode }) {
+  const router = useRouter();
+
   const [meProfile, setMeProfile] = useState<User | null>(null);
 
   const getMeProfile = useCallback(async () => {}, []);
@@ -54,7 +57,8 @@ export function AuthContextProvider({ children }: { children: ReactNode }) {
   const signOut = useCallback(() => {
     storage.removeItem('token');
     setMeProfile(null);
-  }, []);
+    router.push('/auth/sign-in');
+  }, [router]);
 
   const value = useMemo(() => {
     return { signIn, signOut, meProfile, signUp };
