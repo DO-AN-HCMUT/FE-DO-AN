@@ -26,7 +26,7 @@ export default function SignIn() {
       router.push('/');
     } catch (e: any) {
       console.error(e);
-      setErrorText(e.response.data.msg);
+      setErrorText(e.response?.data?.msg);
       // TODO: Handle error message from API
     }
   }, [signIn, input, router]);

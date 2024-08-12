@@ -1,6 +1,8 @@
 import { Box, Modal, Typography } from '@mui/material';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
+
+import AuthContext from '@/contexts/auth';
 
 import Button from '../Button';
 import TextInput from '../TextInput';
@@ -22,6 +24,8 @@ export default function Header() {
   const handleOpen = () => setIsOpenModal(true);
   const handleClose = () => setIsOpenModal(false);
   const [input, setInput] = useState({ projectName: '', description: '' });
+  const { signOut } = useContext(AuthContext);
+
   return (
     <div className='fixed flex w-full items-center justify-between bg-[#3c3c3c] p-4'>
       <Image src='/images/logo.png' alt='logo' width={40} height={40} className='' />
@@ -63,9 +67,17 @@ export default function Header() {
             </div>
           </Box>
         </Modal>
-        <Image src='/images/header/bell.png' alt='notification' width={40} height={40} className='me-2' />
+        <Image src='/images/header/bell.png' alt='notification' width={40} height={40} className='me-4' />
 
-        <Image src='/images/header/avatar.jpeg' alt='profile' width={40} height={40} className='rounded-full' />
+        <Image src='/images/header/avatar.jpeg' alt='profile' width={40} height={40} className='me-4 rounded-full' />
+        <Image
+          src='/icons/logout.svg'
+          alt=''
+          width={40}
+          height={40}
+          className='hover:cursor-pointer'
+          onClick={() => signOut()}
+        />
       </div>
     </div>
   );
