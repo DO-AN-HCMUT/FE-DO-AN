@@ -1,17 +1,19 @@
 'use client';
 import { Google } from '@mui/icons-material';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { useCallback, useContext, useState } from 'react';
+import { redirect, useRouter, useSearchParams } from 'next/navigation';
+import { useCallback, useContext, useEffect, useState } from 'react';
 
 import Button from '@/components/Button';
 import TextInput from '@/components/TextInput';
 import AuthContext from '@/contexts/auth';
+import storage from '@/utils/storage';
 
 export default function SignIn() {
   const [input, setInput] = useState({ email: '', password: '' });
   const [errorText, setErrorText] = useState('');
-
+  const urlParams = useSearchParams();
+  const accessToken = urlParams.get('accessToken');
   const router = useRouter();
   const { signIn } = useContext(AuthContext);
 
@@ -35,6 +37,12 @@ export default function SignIn() {
   const handleOAuth = () => {
     window.location.href = getGoogleOAuthURL();
   };
+  useEffect(() => {
+    if (accessToken) {
+      storage.setItem('token', accessToken);
+      redirect('/');
+    }
+  });
   const handleSignIn = useCallback(async () => {
     if (!input.email || !input.password) {
       setErrorText('Please fill in all fields');
