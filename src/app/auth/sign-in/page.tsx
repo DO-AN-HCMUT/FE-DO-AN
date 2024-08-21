@@ -14,6 +14,7 @@ export default function SignIn() {
 
   const router = useRouter();
   const { signIn } = useContext(AuthContext);
+
   const getGoogleOAuthURL = () => {
     const rootUrl = 'https://accounts.google.com/o/oauth2/v2/auth';
     const options = {
@@ -92,11 +93,11 @@ export default function SignIn() {
               Sign In
             </Button>
           </div>
-          <div>
-            <Button onClick={() => handleOAuth()}>
-              <Google /> Sign in
-            </Button>
-          </div>
+        </div>
+        <div>
+          <Button onClick={() => handleOAuth()} className='w-full'>
+            <Google /> Sign in
+          </Button>
         </div>
       </div>
     </>
