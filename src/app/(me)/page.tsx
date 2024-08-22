@@ -12,7 +12,6 @@ import storage from '@/utils/storage';
 export default function MePage() {
   const [isAuthStatusReady, setIsAuthStatusReady] = useState(false);
 
-  // TODO: Find a better way to implement auth checking
   useEffect(() => {
     if (!storage.getItem('token')) {
       redirect('/auth/sign-in');

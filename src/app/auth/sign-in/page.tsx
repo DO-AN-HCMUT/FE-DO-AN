@@ -1,20 +1,48 @@
 'use client';
-
+import { Google } from '@mui/icons-material';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { useState, useCallback, useContext } from 'react';
+import { redirect, useRouter, useSearchParams } from 'next/navigation';
+import { useCallback, useContext, useEffect, useState } from 'react';
 
 import Button from '@/components/Button';
 import TextInput from '@/components/TextInput';
 import AuthContext from '@/contexts/auth';
+import storage from '@/utils/storage';
 
 export default function SignIn() {
   const [input, setInput] = useState({ email: '', password: '' });
   const [errorText, setErrorText] = useState('');
-
+  const urlParams = useSearchParams();
+  const accessToken = urlParams.get('accessToken');
   const router = useRouter();
   const { signIn } = useContext(AuthContext);
 
+  const getGoogleOAuthURL = () => {
+    const rootUrl = 'https://accounts.google.com/o/oauth2/v2/auth';
+    const options = {
+      redirect_uri: process.env.NEXT_PUBLIC_REDIRECT_URL,
+      client_id: process.env.NEXT_PUBLIC_CLIENT_ID,
+      access_type: 'offline',
+      response_type: 'code',
+      prompt: 'consent',
+      scope: [
+        'https://www.googleapis.com/auth/userinfo.profile',
+        'https://www.googleapis.com/auth/userinfo.email',
+      ].join(' '),
+    };
+    const qs = new URLSearchParams(options as any);
+
+    return `${rootUrl}?${qs.toString()}`;
+  };
+  const handleOAuth = () => {
+    window.location.href = getGoogleOAuthURL();
+  };
+  useEffect(() => {
+    if (accessToken) {
+      storage.setItem('token', accessToken);
+      redirect('/');
+    }
+  });
   const handleSignIn = useCallback(async () => {
     if (!input.email || !input.password) {
       setErrorText('Please fill in all fields');
@@ -73,6 +101,11 @@ export default function SignIn() {
               Sign In
             </Button>
           </div>
+        </div>
+        <div>
+          <Button onClick={() => handleOAuth()} className='w-full'>
+            <Google /> Sign in
+          </Button>
         </div>
       </div>
     </>
