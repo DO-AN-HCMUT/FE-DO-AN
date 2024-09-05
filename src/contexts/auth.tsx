@@ -27,9 +27,8 @@ export function AuthContextProvider({ children }: { children: ReactNode }) {
   const signIn = useCallback(
     async (payload: { email: string; password: string }) => {
       const response = await authService.signIn(payload);
-
-      if (response.accessToken) {
-        storage.setItem('token', response.accessToken);
+      if (response.success) {
+        storage.setItem('token', response.payload.accessToken);
         await getMeProfile();
       } else {
         setMeProfile(null);
