@@ -1,14 +1,32 @@
 /* eslint-disable no-tabs */
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import AddChatItem from '@/components/ChatComponent/AddChatItem';
 import ChatItem from '@/components/ChatComponent/ChatItem';
 import ContentSpace from '@/components/ChatComponent/ContentSpace';
+import api from '@/services/api';
 
 export default function Chat() {
-  const list = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
-  const [selectedValue, setSelectedValue] = useState(1);
+  const [selectedValue, setSelectedValue] = useState(0);
+  const [conservation, setConservation] = useState([]);
+  const getConservation = async () => {
+    try {
+      const result = await api.get('/chat/all');
+      if (result.data.success) {
+        console.log(result.data.payload);
+
+        setConservation(result.data.payload);
+      } else {
+        console.log(result.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    getConservation();
+  }, []);
   return (
     <div className='h-screen'>
       <div className='mb-2'>
@@ -16,12 +34,11 @@ export default function Chat() {
       </div>
       <div className='flex flex-row '>
         <div className='h-screen max-h-screen w-1/2 overflow-y-scroll bg-red'>
-          {list.map((item, index) => (
+          {conservation.map((item, index) => (
             <ChatItem
-              name='logo'
+              id={item}
               key={index}
               onClick={() => {
-                console.log(item);
                 setSelectedValue(item);
               }}
             />
