@@ -8,8 +8,8 @@ import ContentSpace from '@/components/ChatComponent/ContentSpace';
 import api from '@/services/api';
 
 export default function Chat() {
-  const [selectedValue, setSelectedValue] = useState(0);
-  const [conservation, setConservation] = useState([]);
+  const [selectedValue, setSelectedValue] = useState<string>('');
+  const [conservation, setConservation] = useState<any>([]);
   const getConservation = async () => {
     try {
       const result = await api.get('/chat/all');
@@ -22,6 +22,7 @@ export default function Chat() {
       }
     } catch (error) {
       console.log(error);
+      window.location.href = '/auth/sign-in';
     }
   };
   useEffect(() => {
@@ -34,7 +35,7 @@ export default function Chat() {
       </div>
       <div className='flex flex-row '>
         <div className='h-screen max-h-screen w-1/2 overflow-y-scroll bg-red'>
-          {conservation.map((item, index) => (
+          {conservation?.receiver?.map((item: string, index: number) => (
             <ChatItem
               id={item}
               key={index}
@@ -45,7 +46,7 @@ export default function Chat() {
           ))}
         </div>
         <div className='h-screen max-h-screen w-1/2'>
-          <ContentSpace value={selectedValue} />
+          <ContentSpace receiver={selectedValue} sender={conservation?.sender} />
         </div>
       </div>
     </div>

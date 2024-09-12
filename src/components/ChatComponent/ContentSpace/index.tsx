@@ -10,31 +10,37 @@ import api from '@/services/api';
 
 /* eslint-disable no-tabs */
 export default function ContentSpace(props: any) {
-  const [data, setData] = useState([]);
-  const receiverID = props.value;
+  const [data, setData] = useState<any>([]);
+  console.log(props);
+  const { receiver, sender } = props;
   // const [willToast, setWillToast] = useState<boolean>(false);
 
   const [message, setMessage] = useState<string>('');
-  const [receive, setReceive] = useState<string[]>([]);
-
   const socket = io(process.env.NEXT_PUBLIC_CHAT_URL as string);
   const handleClick = () => {
-    socket.emit('message', message);
+    socket.emit('message', { userID: sender, content: message });
     // setWillToast(!willToast);
   };
-  socket.on('broad', (name: string) => {
-    setReceive([...receive, name]);
+  socket.on('broad', (name) => {
+    console.log(name);
+
+    // setReceive([...receive, name]);
+    setData([...data, name]);
   });
   const getData = async () => {
     try {
-      const result = await api.get(`/chat/${receiverID}`);
-      if (result.data.success) {
-        setData(result.data.payload?.message);
-      } else {
-        console.log('vao else');
+      if (receiver.length > 0) {
+        const result = await api.get(`/chat/${receiver}`);
+        if (result.data.success) {
+          setData(result.data.payload?.message);
+        } else {
+          console.log('vao else');
+        }
       }
     } catch (error) {
-      window.location.href = '/auth/sign-in';
+      console.log(error);
+
+      // window.location.href = '/auth/sign-in';
     }
   };
   useEffect(() => {
@@ -45,21 +51,23 @@ export default function ContentSpace(props: any) {
     <>
       <div className='h-4/5 overflow-auto bg-violet-800'>
         {data?.map((item: any, index: number) => (
-          <>
-            {item.userID === receiverID ? (
-              <div className=' flex flex-row bg-orange-600 ' key={index}>
+          <div key={index}>
+            {item.userID === receiver ? (
+              <div className=' flex flex-row bg-orange-600 '>
                 <Avatar>target</Avatar>
                 {item.content}{' '}
               </div>
             ) : (
-              <div className='flex flex-row-reverse bg-lime-400 ' key={index}>
+              <div className='flex flex-row-reverse bg-lime-400 '>
                 <Avatar>me</Avatar>
                 <div>{item.content}</div>
               </div>
             )}
-          </>
+          </div>
         ))}
-        {receive}
+        {/* {receive.map((item: any, index: number) => <div key={index}>
+          {item.content}
+        </div>)} */}
       </div>
       <div className='  flex flex-row justify-between p-3'>
         <TextField
