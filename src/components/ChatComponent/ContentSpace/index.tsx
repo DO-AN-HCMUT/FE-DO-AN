@@ -4,13 +4,11 @@ import { useEffect, useState } from 'react';
 // eslint-disable-next-line import/no-unresolved
 import { io } from 'socket.io-client';
 
-import Toast from '@/components/Toast';
 import api from '@/services/api';
 
 /* eslint-disable no-tabs */
 export default function ContentSpace(props: any) {
   const [data, setData] = useState<any>([]);
-  console.log(props);
   const { receiver, sender } = props;
   // const [willToast, setWillToast] = useState<boolean>(false);
   const [message, setMessage] = useState<string>('');
@@ -54,8 +52,8 @@ export default function ContentSpace(props: any) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props]);
   return (
-    <>
-      <div className='h-4/5 overflow-auto bg-violet-800'>
+    <div className='h-full'>
+      <div className='h-5/6 overflow-auto bg-violet-800'>
         {data?.map((item: any, index: number) => (
           <div key={index}>
             {item.userID === receiver ? (
@@ -71,15 +69,12 @@ export default function ContentSpace(props: any) {
             )}
           </div>
         ))}
-        {/* {receive.map((item: any, index: number) => <div key={index}>
-          {item.content}
-        </div>)} */}
       </div>
-      <div className='  flex flex-row justify-between p-3'>
+      <div className=' flex flex-row justify-between px-0 pt-3 '>
         <TextField
           variant='outlined'
-          label='chat'
-          className='mr-1 w-10/12'
+          label='message'
+          className=' w-11/12'
           value={message}
           onChange={(e) => setMessage(e.target.value)}
         />
@@ -88,6 +83,6 @@ export default function ContentSpace(props: any) {
         </Button>
       </div>
       {/* {willToast   && <Toast type='success' message='hello' />} */}
-    </>
+    </div>
   );
 }

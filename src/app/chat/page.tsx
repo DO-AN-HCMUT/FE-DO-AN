@@ -1,11 +1,13 @@
 /* eslint-disable no-tabs */
 'use client';
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 
 import AddChatItem from '@/components/ChatComponent/AddChatItem';
 import ChatItem from '@/components/ChatComponent/ChatItem';
 import ContentSpace from '@/components/ChatComponent/ContentSpace';
 import api from '@/services/api';
+
+import Loading from '../loading';
 
 export default function Chat() {
   const [selectedValue, setSelectedValue] = useState<string>('');
@@ -33,8 +35,8 @@ export default function Chat() {
       <div className='mb-2'>
         <AddChatItem />
       </div>
-      <div className='flex flex-row '>
-        <div className='h-screen max-h-screen w-1/2 overflow-y-scroll bg-red'>
+      <div className='flex h-full flex-row justify-between gap-1 lg:gap-0'>
+        <div className=' max-h-screen w-6/12 overflow-y-scroll bg-red'>
           {conservation?.receiver?.map((item: string, index: number) => (
             <ChatItem
               id={item}
@@ -45,8 +47,10 @@ export default function Chat() {
             />
           ))}
         </div>
-        <div className='h-screen max-h-screen w-1/2'>
-          <ContentSpace receiver={selectedValue} sender={conservation?.sender} />
+        <div className='max-h-screen w-6/12'>
+          <Suspense fallback={<Loading />}>
+            <ContentSpace receiver={selectedValue} sender={conservation?.sender} />
+          </Suspense>
         </div>
       </div>
     </div>
