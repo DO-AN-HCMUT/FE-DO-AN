@@ -1,6 +1,5 @@
 import SendIcon from '@mui/icons-material/Send';
 import { Avatar, Button, TextField } from '@mui/material';
-import { redirect } from 'next/navigation';
 import { useEffect, useState } from 'react';
 // eslint-disable-next-line import/no-unresolved
 import { io } from 'socket.io-client';
@@ -14,16 +13,9 @@ export default function ContentSpace(props: any) {
   console.log(props);
   const { receiver, sender } = props;
   // const [willToast, setWillToast] = useState<boolean>(false);
-
   const [message, setMessage] = useState<string>('');
   const socket = io(process.env.NEXT_PUBLIC_CHAT_URL as string);
-  const handleClick = () => {
-    socket.emit('message', { userID: sender, content: message });
-    // setWillToast(!willToast);
-  };
   socket.on('broad', (name) => {
-    console.log(name);
-
     // setReceive([...receive, name]);
     setData([...data, name]);
   });
@@ -33,8 +25,6 @@ export default function ContentSpace(props: any) {
         const result = await api.get(`/chat/${receiver}`);
         if (result.data.success) {
           setData(result.data.payload?.message);
-        } else {
-          console.log('vao else');
         }
       }
     } catch (error) {
@@ -42,6 +32,22 @@ export default function ContentSpace(props: any) {
 
       // window.location.href = '/auth/sign-in';
     }
+  };
+  const setNewMessage = async (newContent: any) => {
+    try {
+      await api.put('/chat/addMess', {
+        sender,
+        receiver,
+        message: newContent,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const handleClick = () => {
+    setNewMessage({ userID: sender, content: message });
+    socket.emit('message', { userID: sender, content: message });
+    // setWillToast(!willToast);
   };
   useEffect(() => {
     getData();

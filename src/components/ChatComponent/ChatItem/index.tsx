@@ -10,7 +10,6 @@ type ChatItemProps = {
 };
 export default function ChatItem(props: ChatItemProps) {
   const [isName, setIsName] = useState('');
-  console.log(props.id);
 
   const getName = async () => {
     try {
@@ -22,7 +21,7 @@ export default function ChatItem(props: ChatItemProps) {
   };
   useEffect(() => {
     getName();
-  }, []);
+  });
   return (
     <div
       className='mb-2 flex flex-row items-center justify-start border-2 border-solid border-zinc-950 bg-slate-50 p-2'
