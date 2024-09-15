@@ -26,8 +26,7 @@ export default function ContentSpace(props: any) {
         }
       }
     } catch (error) {
-      console.log(error);
-
+      // console.log(error);
       // window.location.href = '/auth/sign-in';
     }
   };
@@ -39,7 +38,7 @@ export default function ContentSpace(props: any) {
         message: newContent,
       });
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   };
   const handleClick = () => {
@@ -70,18 +69,22 @@ export default function ContentSpace(props: any) {
           </div>
         ))}
       </div>
-      <div className=' flex flex-row justify-between px-0 pt-3 '>
-        <TextField
-          variant='outlined'
-          label='message'
-          className=' w-11/12'
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-        />
-        <Button onClick={() => handleClick()}>
-          <SendIcon />
-        </Button>
-      </div>
+      {receiver.length > 0 ? (
+        <div className=' flex flex-row justify-between px-0 pt-3 '>
+          <TextField
+            variant='outlined'
+            label='message'
+            className=' w-11/12'
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+          />
+          <Button onClick={() => handleClick()}>
+            <SendIcon />
+          </Button>
+        </div>
+      ) : (
+        <div className='h-1/6 bg-violet-800'></div>
+      )}
       {/* {willToast   && <Toast type='success' message='hello' />} */}
     </div>
   );

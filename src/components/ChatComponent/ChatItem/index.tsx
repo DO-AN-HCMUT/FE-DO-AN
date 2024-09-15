@@ -16,7 +16,7 @@ export default function ChatItem(props: ChatItemProps) {
       const data = await api.get(`/user/${props.id}`);
       setIsName(data.data.payload.fullName);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   };
   useEffect(() => {

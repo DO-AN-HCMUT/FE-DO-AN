@@ -16,14 +16,12 @@ export default function Chat() {
     try {
       const result = await api.get('/chat/all');
       if (result.data.success) {
-        console.log(result.data.payload);
+        // console.log(result.data.payload);
 
         setConservation(result.data.payload);
-      } else {
-        console.log(result.data.message);
       }
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       window.location.href = '/auth/sign-in';
     }
   };
@@ -33,7 +31,7 @@ export default function Chat() {
   return (
     <div className='h-screen'>
       <div className='mb-2'>
-        <AddChatItem />
+        <AddChatItem receiver={conservation?.receiver} sender={conservation?.sender} />
       </div>
       <div className='flex h-full flex-row justify-between gap-1 lg:gap-0'>
         <div className=' max-h-screen w-6/12 overflow-y-scroll bg-red'>
