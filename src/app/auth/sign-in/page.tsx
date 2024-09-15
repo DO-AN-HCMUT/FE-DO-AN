@@ -52,6 +52,7 @@ export default function SignIn() {
     try {
       await signIn(input);
       router.push('/');
+      // window.location.href = '/';
     } catch (e: any) {
       console.error(e);
       setErrorText(e.response?.data?.msg);
