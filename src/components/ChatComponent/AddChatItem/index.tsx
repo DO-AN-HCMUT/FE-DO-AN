@@ -26,7 +26,7 @@ export default function AddChatItem(props: any) {
   };
   const handleClick = async () => {
     try {
-      await api.post('/chat/add', {
+      await api.post('/chat/create', {
         sender,
         receiver: willReceive,
         message: [],

@@ -12,6 +12,15 @@ import Loading from '../loading';
 export default function Chat() {
   const [selectedValue, setSelectedValue] = useState<string>('');
   const [conservation, setConservation] = useState<any>([]);
+  const [isDelete, setIsDelete] = useState<boolean>(false);
+  const clickDelete = async (id: string) => {
+    try {
+      await api.delete(`/chat/delete/${id}`);
+      setIsDelete(!isDelete);
+    } catch (error) {
+      // console.log(error);
+    }
+  };
   const getConservation = async () => {
     try {
       const result = await api.get('/chat/all');
@@ -27,7 +36,7 @@ export default function Chat() {
   };
   useEffect(() => {
     getConservation();
-  }, []);
+  }, [isDelete]);
   return (
     <div className='h-screen'>
       <div className='mb-2'>
@@ -39,6 +48,7 @@ export default function Chat() {
             <ChatItem
               id={item}
               key={index}
+              deleteMethod={() => clickDelete(item)}
               onClick={() => {
                 setSelectedValue(item);
               }}
