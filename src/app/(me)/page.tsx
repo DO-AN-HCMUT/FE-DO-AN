@@ -39,7 +39,7 @@ export default function MePage() {
       {/* HEADER */}
       <Header />
       {/* BODY */}
-      <div className='flex h-full pt-[72px]'>
+      <div className='flex h-full'>
         <SideBar />
         {/* CONTENT */}
         <div className='flex w-11/12 items-stretch bg-[#eee] px-10 py-12'>
