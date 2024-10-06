@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { Box, Button, FormControl, InputLabel, MenuItem, Modal, Select, Typography } from '@mui/material';
 import { useState } from 'react';
 
@@ -32,7 +33,7 @@ export default function AddChatItem(props: any) {
         message: [],
       });
     } catch (error) {
-      // console.log(error);
+      console.log(error);
     }
   };
   return (

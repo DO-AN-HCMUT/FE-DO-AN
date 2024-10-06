@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Avatar, Button } from '@mui/material';
 import { useEffect, useState } from 'react';
@@ -17,7 +18,7 @@ export default function ChatItem(props: ChatItemProps) {
       const data = await api.get(`/user/${props.id}`);
       setIsName(data.data.payload.fullName);
     } catch (error) {
-      // console.log(error);
+      console.log(error);
     }
   };
   useEffect(() => {

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable no-tabs */
 'use client';
 import { Suspense, useEffect, useState } from 'react';
@@ -20,7 +21,7 @@ export default function Chat() {
       await api.delete(`/chat/delete/${id}`);
       setIsDelete(!isDelete);
     } catch (error) {
-      // console.log(error);
+      console.log(error);
     }
   };
   const getConservation = async () => {
@@ -32,7 +33,6 @@ export default function Chat() {
         setConservation(result.data.payload);
       }
     } catch (error) {
-      // console.log(error);
       window.location.href = '/auth/sign-in';
     }
   };

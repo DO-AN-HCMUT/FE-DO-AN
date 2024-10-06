@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import SendIcon from '@mui/icons-material/Send';
 import { Avatar, Button, TextField } from '@mui/material';
 import { useEffect, useState } from 'react';
@@ -26,7 +27,7 @@ export default function ContentSpace(props: any) {
         }
       }
     } catch (error) {
-      // console.log(error);
+      console.log(error);
       // window.location.href = '/auth/sign-in';
     }
   };
@@ -38,7 +39,7 @@ export default function ContentSpace(props: any) {
         message: newContent,
       });
     } catch (error) {
-      // console.log(error);
+      console.log(error);
     }
   };
   const handleClick = () => {
