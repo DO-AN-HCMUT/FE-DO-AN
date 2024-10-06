@@ -27,7 +27,7 @@ export default function Header() {
   const { signOut } = useContext(AuthContext);
 
   return (
-    <div className='fixed flex w-full items-center justify-between bg-[#3c3c3c] p-4'>
+    <div className='flex w-full items-center justify-between bg-[#3c3c3c] p-4'>
       <Image src='/images/logo.png' alt='logo' width={40} height={40} className='' />
       <div className='flex'>
         <Button className='me-4' onClick={handleOpen}>
