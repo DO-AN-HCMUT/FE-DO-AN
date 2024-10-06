@@ -17,7 +17,6 @@ export default function ContentSpace(props: any) {
     // setReceive([...receive, name]);
     setData([...data, name]);
   });
-
   const getData = async () => {
     try {
       if (receiver.length > 0) {
