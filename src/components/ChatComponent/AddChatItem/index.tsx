@@ -38,7 +38,7 @@ export default function AddChatItem(props: any) {
   return (
     <div>
       <Button onClick={handleOpen} variant='contained'>
-        Open modal
+        New Chat
       </Button>
       <Modal
         open={isOpen}
@@ -66,7 +66,7 @@ export default function AddChatItem(props: any) {
               </Select>
             </FormControl>
             <Button variant='contained' disabled={willReceive.length <= 0 && true} onClick={handleClick}>
-              Add
+              Chat
             </Button>
           </div>
         </Box>

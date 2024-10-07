@@ -7,6 +7,7 @@ import api from '@/services/api';
 type ChatItemProps = {
   id: string;
   onClick: any;
+  deleteMethod: any;
 };
 export default function ChatItem(props: ChatItemProps) {
   const [isName, setIsName] = useState('');
