@@ -1,10 +1,10 @@
-import { Box, Modal, Typography } from '@mui/material';
+import { Box, Button, Modal, Typography } from '@mui/material';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useState, useContext } from 'react';
 
 import AuthContext from '@/contexts/auth';
 
-import Button from '../Button';
 import TextInput from '../TextInput';
 
 const style = {
@@ -30,10 +30,9 @@ export default function Header() {
     <div className='flex w-full items-center justify-between bg-[#3c3c3c] p-4'>
       <Image src='/images/logo.png' alt='logo' width={40} height={40} className='' />
       <div className='flex'>
-        <Button className='me-4' onClick={handleOpen}>
+        <Button className='rounded-lg bg-teal-500 px-4 py-2 transition-all' variant='contained' onClick={handleOpen}>
           + New Project
         </Button>
-
         <Modal
           open={isOpenModal}
           onClose={handleClose}
@@ -57,19 +56,21 @@ export default function Header() {
                 />
               </div>
               <div className='self-end'>
-                <Button type='neutral-positive' className='me-4' onClick={handleClose}>
+                <Button
+                  className='me-4 border-[1px] border-primary bg-white text-primary hover:bg-primary hover:text-white'
+                  onClick={handleClose}
+                >
                   Cancel
                 </Button>
-                <Button type='positive' onClick={() => {}}>
-                  Submit
-                </Button>
+                <Button className='bg-primary text-white hover:bg-primary-dark'>Submit</Button>
               </div>
             </div>
           </Box>
         </Modal>
         <Image src='/images/header/bell.png' alt='notification' width={40} height={40} className='me-4' />
-
-        <Image src='/images/header/avatar.jpeg' alt='profile' width={40} height={40} className='me-4 rounded-full' />
+        <Link href='/profile'>
+          <Image src='/images/header/avatar.jpeg' alt='profile' width={40} height={40} className='me-4 rounded-full' />
+        </Link>
         <Image
           src='/icons/logout.svg'
           alt=''
