@@ -39,16 +39,6 @@ export default function InputList(props: ProfileProps) {
         />
       </div>
       <div className='flex w-full  flex-row justify-between'>
-        <div className='flex w-5/12 flex-row  p-1'>
-          <AlternateEmailOutlinedIcon fontSize='large' />
-          <TextField
-            id='email'
-            label='Email'
-            value={email}
-            fullWidth
-            onChange={(e) => handleChange(e.target.value, setEmail)}
-          />
-        </div>
         <div className='flex w-6/12 flex-row  p-1'>
           <DateRangeIcon fontSize='large' />
           <div>
@@ -62,6 +52,16 @@ export default function InputList(props: ProfileProps) {
               />
             </LocalizationProvider>
           </div>
+        </div>
+        <div className='flex w-full flex-row  p-1'>
+          <AlternateEmailOutlinedIcon fontSize='large' />
+          <TextField
+            id='email'
+            label='Email'
+            value={email}
+            fullWidth
+            onChange={(e) => handleChange(e.target.value, setEmail)}
+          />
         </div>
       </div>
     </div>
