@@ -11,7 +11,7 @@ export default function ProfileLayout() {
   const [fullName, setFullName] = useState<string>('fullName');
   const [email, setEmail] = useState<string>('Email');
   const [birthday, setBirthday] = useState<string>(new Date().toString());
-  const [file, setFile] = useState<any>([]);
+  const [file, setFile] = useState<string>('https://avatar.iran.liara.run/public');
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const getProfile = async () => {
     try {
@@ -41,7 +41,7 @@ export default function ProfileLayout() {
   return (
     <div className='w-full'>
       <div>
-        <Typography variant='h1'>Profile</Typography>
+        <Typography variant='h2'>Profile</Typography>
       </div>
       <div className=' flex min-h-10 flex-row'>
         <div className='w-fit bg-yellow-500 p-2'>
