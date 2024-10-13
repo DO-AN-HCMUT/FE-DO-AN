@@ -73,15 +73,18 @@ export default function ProfileLayout() {
         <Typography variant='h2'>Profile</Typography>
       </div>
       <div className=' flex min-h-10 flex-row'>
-        <div className='w-fit  p-2 pt-0'>
-          <Image
-            src={typeof img == 'string' ? img : URL.createObjectURL(img)}
-            alt='avatar'
-            width={500}
-            height={200}
-            style={{ maxHeight: '200px', maxWidth: '100%', borderRadius: '8px' }}
-            className='bg-yellow-500'
-          />
+        <div className='w-fit p-2 pt-0'>
+          <div>
+            <Image
+              src={typeof img == 'string' ? img : URL.createObjectURL(img)}
+              alt='avatar'
+              width={500}
+              height={200}
+              style={{ height: '150px' }}
+              className='max-w-full rounded-full border-2 border-solid'
+            />
+          </div>
+
           <Button variant='contained' className='w-full' onClick={() => handleClick()}>
             Upload
           </Button>

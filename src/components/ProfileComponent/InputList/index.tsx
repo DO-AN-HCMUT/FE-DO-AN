@@ -28,7 +28,7 @@ export default function InputList(props: ProfileProps) {
   };
   return (
     <div className='w-full'>
-      <div className='flex flex-row p-1'>
+      <div className='flex flex-row  p-1'>
         <PersonOutlinedIcon fontSize='large' />
         <TextField
           id='fullName'
@@ -38,7 +38,7 @@ export default function InputList(props: ProfileProps) {
           onChange={(e) => handleChange(e.target.value, setFullName)}
         />
       </div>
-      <div className='flex w-full  flex-row justify-between'>
+      <div className='flex w-full  flex-col justify-between lg:flex-row'>
         <div className='flex w-6/12 flex-row  p-1'>
           <DateRangeIcon fontSize='large' />
           <div>
