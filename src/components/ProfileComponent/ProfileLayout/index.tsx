@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import api from '@/services/api';
 
 import InputList from '../InputList';
+import ProjectList from '../ProjectList';
 
 /* eslint-disable no-tabs */
 export default function ProfileLayout() {
@@ -102,7 +103,8 @@ export default function ProfileLayout() {
           />
         </div>
       </div>
-      <div className=' w-full pt-1'>
+      <ProjectList />
+      <div className=' mt-2 w-full'>
         <Button variant='contained' color='success' disabled={!isEdit} className='w-full' onClick={() => handleSave()}>
           Save
         </Button>
