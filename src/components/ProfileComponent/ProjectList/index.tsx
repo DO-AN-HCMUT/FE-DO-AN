@@ -1,13 +1,32 @@
 import SearchIcon from '@mui/icons-material/Search';
 import { TextField, Typography } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+
+import api from '@/services/api';
 
 import ProjectListItem from '../ProjectListItem';
 
 /* eslint-disable no-tabs */
 export default function ProjectList() {
   const [searchItem, setSearchItem] = useState<string>('');
-
+  const [projectData, setProjectData] = useState<any>([]);
+  const getData = async () => {
+    try {
+      if (searchItem.length > 0) {
+        const result = await api.get(`/user/projects?searching=${searchItem}`);
+        setProjectData(result.data.payload);
+      } else {
+        const result = await api.get('/user/projects');
+        setProjectData(result.data.payload);
+      }
+    } catch (error) {
+      //console.log(error);
+    }
+  };
+  useEffect(() => {
+    getData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchItem]);
   return (
     <div>
       <Typography variant='h3'>My Project</Typography>
@@ -22,7 +41,7 @@ export default function ProjectList() {
         />
       </div>
       <div className='mt-1 rounded bg-pink-500 p-2'>
-        <ProjectListItem />
+        <ProjectListItem data={projectData} />
       </div>
     </div>
   );

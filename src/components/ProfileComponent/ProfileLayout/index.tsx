@@ -62,8 +62,8 @@ export default function ProfileLayout() {
     setImg(imgLink);
   };
   const handleClick = () => {
-    setIsEdit(true);
     inputFile?.current?.click();
+    setIsEdit(true);
   };
   useEffect(() => {
     getProfile();
