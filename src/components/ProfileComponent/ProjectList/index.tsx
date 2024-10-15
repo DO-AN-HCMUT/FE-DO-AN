@@ -40,7 +40,7 @@ export default function ProjectList() {
           onChange={(e) => setSearchItem(e.target.value)}
         />
       </div>
-      <div className='mt-1 rounded bg-pink-500 p-2'>
+      <div className='mt-1 h-[300px] overflow-y-auto rounded bg-stone-500 p-2'>
         <ProjectListItem data={projectData} />
       </div>
     </div>

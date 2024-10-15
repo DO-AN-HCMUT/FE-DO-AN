@@ -104,7 +104,7 @@ export default function ProfileLayout() {
         </div>
       </div>
       <ProjectList />
-      <div className=' mt-2 w-full'>
+      <div className='mt-2 w-full'>
         <Button variant='contained' color='success' disabled={!isEdit} className='w-full' onClick={() => handleSave()}>
           Save
         </Button>

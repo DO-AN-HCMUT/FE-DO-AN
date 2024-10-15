@@ -9,11 +9,13 @@ export default function ProjectListItem(props: ProjectProps) {
   return (
     <div>
       {data.map((item: any, index: number) => {
-        return (
-          <div className='border-2 border-solid' key={index}>
-            <Typography variant='h4'>{item.projectName}</Typography>
-          </div>
-        );
+        if (item?.projectName) {
+          return (
+            <div className='mb-2 cursor-pointer border-2 border-solid' key={index}>
+              <Typography variant='h4'>{item?.projectName}</Typography>
+            </div>
+          );
+        }
       })}
     </div>
   );
