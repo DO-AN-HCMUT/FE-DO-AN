@@ -28,7 +28,6 @@ export default function Chat() {
     try {
       const result = await api.get('/chat/all');
       if (result.data.success) {
-        console.log(result.data.payload);
         setConservation(result.data.payload);
       }
     } catch (error) {
