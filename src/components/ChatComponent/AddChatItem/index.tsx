@@ -1,11 +1,12 @@
 import { Box, Button, FormControl, InputLabel, MenuItem, Modal, Select, Typography } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import api from '@/services/api';
 
 /* eslint-disable no-tabs */
 export default function AddChatItem(props: any) {
   const { sender } = props;
+  const [friend, setFriend] = useState<any>([]);
   const style = {
     position: 'absolute',
     top: '50%',
@@ -17,6 +18,14 @@ export default function AddChatItem(props: any) {
     boxShadow: 24,
     p: 4,
   };
+  const getData = async () => {
+    try {
+      const result = await api.get('/user/friend');
+      setFriend(result.data.payload);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const [isOpen, setIsOpen] = useState(false);
   const handleOpen = () => setIsOpen(true);
   const handleClose = () => setIsOpen(false);
@@ -26,15 +35,19 @@ export default function AddChatItem(props: any) {
   };
   const handleClick = async () => {
     try {
-      await api.post('/chat/add', {
-        sender,
-        receiver: willReceive,
+      await api.post('/chat/create', {
+        userIDs: [sender, willReceive],
         message: [],
       });
+      setIsOpen(false);
+      window.location.reload();
     } catch (error) {
       // console.log(error);
     }
   };
+  useEffect(() => {
+    getData();
+  }, [isOpen]);
   return (
     <div>
       <Button onClick={handleOpen} variant='contained'>
@@ -60,9 +73,13 @@ export default function AddChatItem(props: any) {
                 label='User'
                 onChange={handleChange}
               >
-                <MenuItem value={'10'}>Ten</MenuItem>
-                <MenuItem value={'20'}>Twenty</MenuItem>
-                <MenuItem value={'30'}>Thirty</MenuItem>
+                {friend.map((item: any, index: number) => {
+                  return (
+                    <MenuItem value={item.id} key={index}>
+                      {item.fullName ? item.fullName : 'User'}
+                    </MenuItem>
+                  );
+                })}
               </Select>
             </FormControl>
             <Button variant='contained' disabled={willReceive.length <= 0 && true} onClick={handleClick}>
