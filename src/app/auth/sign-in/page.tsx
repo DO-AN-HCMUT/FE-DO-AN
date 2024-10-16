@@ -105,7 +105,7 @@ export default function SignIn() {
         </div>
         <div>
           <Button onClick={() => handleOAuth()} className='w-full'>
-            <Google /> Sign in
+            <Google /> Continue with Google
           </Button>
         </div>
       </div>
