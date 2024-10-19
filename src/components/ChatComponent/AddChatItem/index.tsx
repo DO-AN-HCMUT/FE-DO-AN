@@ -23,7 +23,7 @@ export default function AddChatItem(props: any) {
       const result = await api.get('/user/friend');
       setFriend(result.data.payload);
     } catch (error) {
-      console.log(error);
+      //console.log(error);
     }
   };
   const [isOpen, setIsOpen] = useState(false);
@@ -61,18 +61,12 @@ export default function AddChatItem(props: any) {
       >
         <Box sx={style}>
           <Typography id='modal-modal-title' variant='h6' component='h2'>
-            Text in a modal
+            Create Chat
           </Typography>
-          <div className='flex flex-row justify-between'>
+          <div className='mt-1 flex flex-row justify-between'>
             <FormControl fullWidth>
-              <InputLabel id='demo-simple-select-label'>User</InputLabel>
-              <Select
-                labelId='demo-simple-select-label'
-                id='demo-simple-select'
-                value={willReceive}
-                label='User'
-                onChange={handleChange}
-              >
+              <InputLabel id='select-label'>Friend</InputLabel>
+              <Select labelId='select-label' id='select' value={willReceive} label='Friend' onChange={handleChange}>
                 {friend.map((item: any, index: number) => {
                   return (
                     <MenuItem value={item.id} key={index}>

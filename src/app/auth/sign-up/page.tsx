@@ -35,7 +35,7 @@ export default function SignUp() {
       setErrorText(e.response?.data?.msg);
       // TODO: Handle error message from API
     }
-  }, [input, router, signUp]);
+  }, [input, signUp]);
 
   return (
     <>
