@@ -28,7 +28,8 @@ export default function SignUp() {
 
     try {
       await signUp(input);
-      router.push('/');
+      // router.push('/');
+      window.location.href = '/';
     } catch (e: any) {
       console.error(e);
       setErrorText(e.response?.data?.msg);

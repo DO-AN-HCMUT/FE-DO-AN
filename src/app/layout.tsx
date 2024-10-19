@@ -1,6 +1,9 @@
 import { Inter } from 'next/font/google';
+import { Suspense } from 'react';
 
 import { AuthContextProvider } from '@/contexts/auth';
+
+import Loading from './loading';
 
 import type { Metadata } from 'next';
 
@@ -21,7 +24,9 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body className={inter.className}>
-        <AuthContextProvider>{children}</AuthContextProvider>
+        <AuthContextProvider>
+          <Suspense fallback={<Loading />}>{children}</Suspense>
+        </AuthContextProvider>
       </body>
     </html>
   );

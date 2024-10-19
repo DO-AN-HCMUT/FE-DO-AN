@@ -44,6 +44,7 @@ export default function ContentSpace(props: any) {
   const handleClick = () => {
     setNewMessage({ userID: sender, content: message });
     socket.emit('message', { userID: sender, content: message });
+    setMessage('');
     // setWillToast(!willToast);
   };
   useEffect(() => {
@@ -56,14 +57,18 @@ export default function ContentSpace(props: any) {
         {data?.map((item: any, index: number) => (
           <div key={index}>
             {item.userID === receiver ? (
-              <div className=' flex flex-row bg-orange-600 '>
+              <div className=' flex flex-row  '>
                 <Avatar>target</Avatar>
-                {item.content}{' '}
+                <div className=' mx-1 w-5/12 overflow-auto  rounded-lg border-2 border-solid border-gray-200 bg-gray-500 p-2 text-slate-50'>
+                  {item.content}
+                </div>
               </div>
             ) : (
-              <div className='flex flex-row-reverse bg-lime-400 '>
+              <div className='flex flex-row-reverse  '>
                 <Avatar>me</Avatar>
-                <div>{item.content}</div>
+                <div className=' mx-1 w-5/12 overflow-auto  rounded-lg border-2 border-solid border-gray-200 bg-teal-200 p-2'>
+                  {item.content}
+                </div>
               </div>
             )}
           </div>
@@ -77,6 +82,7 @@ export default function ContentSpace(props: any) {
             className=' w-11/12'
             value={message}
             onChange={(e) => setMessage(e.target.value)}
+            multiline
           />
           <Button onClick={() => handleClick()}>
             <SendIcon />

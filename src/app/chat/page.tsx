@@ -16,6 +16,7 @@ export default function Chat() {
   const [selectedValue, setSelectedValue] = useState<string>('');
   const [conservation, setConservation] = useState<any>([]);
   const [isDelete, setIsDelete] = useState<boolean>(false);
+  const [isSelectedItem, setIsSelectedItem] = useState<number>(-1);
   const clickDelete = async (id: string) => {
     try {
       await api.delete(`/chat/delete/${id}`);
@@ -55,9 +56,11 @@ export default function Chat() {
                   id={item}
                   key={index}
                   deleteMethod={() => clickDelete(item)}
-                  onClick={() => {
+                  onClickMethod={() => {
+                    setIsSelectedItem(index);
                     setSelectedValue(item);
                   }}
+                  isSelect={isSelectedItem === index}
                 />
               ))}
             </div>
