@@ -19,7 +19,7 @@ export default function Chat() {
   const [isSelectedItem, setIsSelectedItem] = useState<number>(-1);
   const clickDelete = async (id: string) => {
     try {
-      await api.delete(`/chat/delete/${id}`);
+      await api.delete(`/chat/${id}/delete`);
       setIsDelete(!isDelete);
     } catch (error) {
       console.log(error);
