@@ -7,12 +7,13 @@ import api from '@/services/api';
 /* eslint-disable no-tabs */
 type ChatItemProps = {
   id: string;
-  onClick: any;
+  onClickMethod: any;
   deleteMethod: any;
+  isSelect: boolean;
 };
 export default function ChatItem(props: ChatItemProps) {
-  const [isName, setIsName] = useState('');
-  const { deleteMethod } = props;
+  const [isName, setIsName] = useState<string>('');
+  const { deleteMethod, onClickMethod, isSelect } = props;
   const getName = async () => {
     try {
       const data = await api.get(`/user/${props.id}`);
@@ -24,11 +25,18 @@ export default function ChatItem(props: ChatItemProps) {
   useEffect(() => {
     getName();
   });
+
   return (
-    <div className='mb-2 flex flex-row items-center justify-between border-2 border-solid border-zinc-950 bg-slate-50 p-2'>
-      <div className='flex cursor-pointer flex-row items-center justify-center' onClick={props.onClick}>
+    <div
+      className='mb-2 flex flex-row items-center justify-between rounded-lg border-4 border-solid border-zinc-950 bg-slate-50 p-2'
+      style={{ borderColor: isSelect ? 'rgb(21 128 61)' : 'transparent' }}
+      onClick={() => {
+        onClickMethod();
+      }}
+    >
+      <div className='flex w-9/12 cursor-pointer flex-row items-center'>
         <div>
-          <Avatar>{isName.length > 0 ? isName : 'logo'}</Avatar>
+          <Avatar> logo</Avatar>
         </div>
         <div className='ml-1'>{isName.length > 0 ? isName : 'Unknow'}</div>
       </div>

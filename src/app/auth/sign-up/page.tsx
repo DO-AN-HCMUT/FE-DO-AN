@@ -28,7 +28,6 @@ export default function SignUp() {
         setErrorText('Passwords do not match');
         return;
       }
-
       try {
         await signUp(input);
         router.push('/');
@@ -40,6 +39,7 @@ export default function SignUp() {
     },
     [input, router, signUp],
   );
+
 
   return (
     <>
