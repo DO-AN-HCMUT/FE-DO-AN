@@ -1,6 +1,7 @@
 import SearchIcon from '@mui/icons-material/Search';
 import { TextField, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 
 import api from '@/services/api';
 
@@ -20,7 +21,8 @@ export default function ProjectList() {
         const result = await api.get('/user/projects');
         setProjectData(result.data.payload);
       }
-    } catch (error) {
+    } catch (error: any) {
+      toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
       //console.log(error);
     }
   };

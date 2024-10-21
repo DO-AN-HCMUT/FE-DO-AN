@@ -4,8 +4,7 @@ import Button from '@mui/material/Button';
 import Image from 'next/image';
 import { redirect, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useContext, useEffect, useState } from 'react';
-
-// import Button from '@/components/Button';
+import toast from 'react-hot-toast';
 
 import TextInput from '@/components/TextInput';
 import AuthContext from '@/contexts/auth';
@@ -13,7 +12,7 @@ import storage from '@/utils/storage';
 
 export default function SignIn() {
   const [input, setInput] = useState({ email: '', password: '' });
-  const [errorText, setErrorText] = useState('');
+  // const [errorText, setErrorText] = useState('');
   const urlParams = useSearchParams();
   const accessToken = urlParams.get('accessToken');
   const router = useRouter();
@@ -49,17 +48,21 @@ export default function SignIn() {
     async (event: any) => {
       event.preventDefault();
       if (!input.email || !input.password) {
-        setErrorText('Please fill in all fields');
+        toast.error('Please fill in all fields');
+        // setErrorText('Please fill in all fields');
         return;
       }
 
       try {
         await signIn(input);
-        router.push('/');
+        toast.success('Success');
+        setTimeout(() => {
+          router.push('/');
+        }, 2000);
         // window.location.href = '/';
-      } catch (e: any) {
-        console.error(e);
-        setErrorText(e.response?.data?.msg);
+      } catch (error: any) {
+        // setErrorText(e.response?.data?.msg);
+        toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
         // TODO: Handle error message from API
       }
     },
@@ -92,7 +95,7 @@ export default function SignIn() {
               }}
               type='password'
             />
-            {errorText && <p className='mt-2 italic text-red'>{errorText}</p>}
+            {/* {errorText && <p className='mt-2 italic text-red'>{errorText}</p>} */}
           </div>
           <div>
             <div className=' my-1 flex w-full flex-row items-center justify-between'>
@@ -117,7 +120,7 @@ export default function SignIn() {
               >
                 Sign Up
               </Button>
-              <Button type='submit' variant='outlined' color='success' className='me-4 w-36'>
+              <Button type='submit' variant='outlined' color='success' className=' w-36'>
                 Sign In
               </Button>
             </div>

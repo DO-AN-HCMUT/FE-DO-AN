@@ -2,6 +2,7 @@
 /* eslint-disable no-tabs */
 'use client';
 import { Suspense, useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 
 import AddChatItem from '@/components/ChatComponent/AddChatItem';
 import ChatItem from '@/components/ChatComponent/ChatItem';
@@ -20,9 +21,11 @@ export default function Chat() {
   const clickDelete = async (id: string) => {
     try {
       await api.delete(`/chat/${id}/delete`);
+      toast.success('Done');
       setIsDelete(!isDelete);
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
+      toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
     }
   };
   const getConservation = async () => {
@@ -31,8 +34,10 @@ export default function Chat() {
       if (result.data.success) {
         setConservation(result.data.payload);
       }
-    } catch (error) {
-      window.location.href = '/auth/sign-in';
+    } catch (error: any) {
+      console.log(error);
+      toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
+      //window.location.href = '/auth/sign-in';
     }
   };
   useEffect(() => {

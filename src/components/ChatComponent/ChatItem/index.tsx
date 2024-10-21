@@ -1,6 +1,7 @@
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Avatar } from '@mui/material';
 import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 
 import api from '@/services/api';
 
@@ -18,7 +19,8 @@ export default function ChatItem(props: ChatItemProps) {
     try {
       const data = await api.get(`/user/${props.id}`);
       setIsName(data.data.payload.fullName);
-    } catch (error) {
+    } catch (error: any) {
+      toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
       // console.log(error);
     }
   };

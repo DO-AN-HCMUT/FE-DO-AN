@@ -2,6 +2,7 @@
 
 import { redirect } from 'next/navigation';
 import { ReactNode, useEffect, useState } from 'react';
+import { Toaster } from 'react-hot-toast';
 
 import storage from '@/utils/storage';
 
@@ -23,6 +24,7 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
 
   return (
     <div className="flex h-screen items-center justify-center bg-[url('/images/auth/background.jpeg')]">
+      <Toaster position='bottom-left' />
       <div className='flex h-1/2 w-1/2 justify-between rounded-2xl bg-white p-20'>{children}</div>
     </div>
   );

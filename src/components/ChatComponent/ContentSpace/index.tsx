@@ -2,6 +2,7 @@ import SendIcon from '@mui/icons-material/Send';
 import { Avatar, Button, TextField } from '@mui/material';
 import { useEffect, useState } from 'react';
 // eslint-disable-next-line import/no-unresolved
+import toast from 'react-hot-toast';
 import { io } from 'socket.io-client';
 
 import api from '@/services/api';
@@ -20,13 +21,14 @@ export default function ContentSpace(props: any) {
   const getData = async () => {
     try {
       if (receiver.length > 0) {
-        const result = await api.get(`/chat/${receiver}`);
+        const result = await api.get(`/chat/${receiver}/detail`);
         if (result.data.success) {
           setData(result.data.payload?.message);
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       // console.log(error);
+      toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
       // window.location.href = '/auth/sign-in';
     }
   };
@@ -37,7 +39,8 @@ export default function ContentSpace(props: any) {
         receiver,
         message: newContent,
       });
-    } catch (error) {
+    } catch (error: any) {
+      toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
       // console.log(error);
     }
   };
@@ -46,7 +49,6 @@ export default function ContentSpace(props: any) {
 
     socket.emit('message', { userID: sender, content: message });
     setMessage('');
-    // setWillToast(!willToast);
   };
   useEffect(() => {
     getData();
@@ -96,7 +98,6 @@ export default function ContentSpace(props: any) {
       ) : (
         <div className='h-1/6 bg-violet-800'></div>
       )}
-      {/* {willToast   && <Toast type='success' message='hello' />} */}
     </div>
   );
 }
