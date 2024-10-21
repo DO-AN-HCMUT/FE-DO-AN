@@ -4,14 +4,15 @@ import { Button } from '@mui/material';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useCallback, useContext, useState } from 'react';
-
 // import Button from '@/components/Button';
+import toast from 'react-hot-toast';
+
 import TextInput from '@/components/TextInput';
 import AuthContext from '@/contexts/auth';
 
 export default function SignUp() {
   const [input, setInput] = useState({ email: '', password: '', confirmPassword: '' });
-  const [errorText, setErrorText] = useState('');
+  // const [errorText, setErrorText] = useState('');
 
   const router = useRouter();
   const { signUp } = useContext(AuthContext);
@@ -20,26 +21,27 @@ export default function SignUp() {
     async (event: any) => {
       event.preventDefault();
       if (!input.email || !input.password || !input.confirmPassword) {
-        setErrorText('Please fill in all fields');
+        toast.error('Please fill in all fields');
         return;
       }
 
       if (input.password !== input.confirmPassword) {
-        setErrorText('Passwords do not match');
+        toast.error('Passwords do not match');
         return;
       }
       try {
         await signUp(input);
-        router.push('/');
-      } catch (e: any) {
-        console.error(e);
-        setErrorText(e.response?.data?.msg);
+        toast.success('Success');
+        setTimeout(() => {
+          router.push('/');
+        }, 2000);
+      } catch (error: any) {
+        toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
         // TODO: Handle error message from API
       }
     },
     [input, router, signUp],
   );
-
 
   return (
     <>
@@ -70,7 +72,7 @@ export default function SignUp() {
               onInput={(confirmPassword) => setInput({ ...input, confirmPassword })}
               type='password'
             />
-            {errorText && <p className='mt-2 italic text-red'>{errorText}</p>}
+            {/* {errorText && <p className='mt-2 italic text-red'>{errorText}</p>} */}
           </div>
           <div className='mt-8 flex w-full flex-row items-center justify-between'>
             <Button
@@ -82,7 +84,7 @@ export default function SignUp() {
             >
               Sign In
             </Button>
-            <Button type='submit' className='me-4 w-36' variant='outlined'>
+            <Button type='submit' className=' w-36' variant='outlined'>
               Sign Up
             </Button>
           </div>

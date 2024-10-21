@@ -1,6 +1,7 @@
 import { Button, Typography } from '@mui/material';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
+import toast from 'react-hot-toast';
 
 import api from '@/services/api';
 
@@ -23,7 +24,8 @@ export default function ProfileLayout() {
       if (profile.data.payload?.avatar.length > 0) {
         setImg(profile.data.payload.avatar);
       }
-    } catch (error) {
+    } catch (error: any) {
+      toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
       // console.log(error);
     }
   };
@@ -35,7 +37,8 @@ export default function ProfileLayout() {
         const formData = new FormData();
         formData.append('file', img);
         await api.post('/user/uploadImg', formData);
-      } catch (error) {
+      } catch (error: any) {
+        toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
         // console.log(error);
       }
     }
@@ -48,7 +51,8 @@ export default function ProfileLayout() {
         birthday,
       };
       await api.put('/user/update', userData);
-    } catch (error) {
+    } catch (error: any) {
+      toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
       // console.log(error);
     }
   };
