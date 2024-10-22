@@ -37,6 +37,9 @@ export default function Chat() {
     } catch (error: any) {
       console.log(error);
       toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
+      setTimeout(() => {
+        window.location.href = '/auth/sign-in';
+      }, 4000);
       //window.location.href = '/auth/sign-in';
     }
   };

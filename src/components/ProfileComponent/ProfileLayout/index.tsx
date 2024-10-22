@@ -26,6 +26,9 @@ export default function ProfileLayout() {
       }
     } catch (error: any) {
       toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
+      setTimeout(() => {
+        window.location.href = '/auth/sign-in';
+      }, 4000);
       // console.log(error);
     }
   };
