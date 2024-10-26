@@ -2,6 +2,7 @@
 /* eslint-disable no-tabs */
 'use client';
 import { Suspense, useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 
 import AddChatItem from '@/components/ChatComponent/AddChatItem';
 import ChatItem from '@/components/ChatComponent/ChatItem';
@@ -16,23 +17,27 @@ export default function Chat() {
   const [selectedValue, setSelectedValue] = useState<string>('');
   const [conservation, setConservation] = useState<any>([]);
   const [isDelete, setIsDelete] = useState<boolean>(false);
+  const [isSelectedItem, setIsSelectedItem] = useState<number>(-1);
   const clickDelete = async (id: string) => {
     try {
-      await api.delete(`/chat/delete/${id}`);
+      await api.delete(`/chat/${id}/delete`);
+      toast.success('Done');
       setIsDelete(!isDelete);
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
+      toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
     }
   };
   const getConservation = async () => {
     try {
       const result = await api.get('/chat/all');
       if (result.data.success) {
-        console.log(result.data.payload);
         setConservation(result.data.payload);
       }
-    } catch (error) {
-      window.location.href = '/auth/sign-in';
+    } catch (error: any) {
+      console.log(error);
+      toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
+      //window.location.href = '/auth/sign-in';
     }
   };
   useEffect(() => {
@@ -56,9 +61,11 @@ export default function Chat() {
                   id={item}
                   key={index}
                   deleteMethod={() => clickDelete(item)}
-                  onClick={() => {
+                  onClickMethod={() => {
+                    setIsSelectedItem(index);
                     setSelectedValue(item);
                   }}
+                  isSelect={isSelectedItem === index}
                 />
               ))}
             </div>

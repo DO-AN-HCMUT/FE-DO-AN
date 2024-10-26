@@ -1,11 +1,13 @@
 import { Box, Button, FormControl, InputLabel, MenuItem, Modal, Select, Typography } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 
 import api from '@/services/api';
 
 /* eslint-disable no-tabs */
 export default function AddChatItem(props: any) {
   const { sender } = props;
+  const [friend, setFriend] = useState<any>([]);
   const style = {
     position: 'absolute',
     top: '50%',
@@ -17,6 +19,15 @@ export default function AddChatItem(props: any) {
     boxShadow: 24,
     p: 4,
   };
+  const getData = async () => {
+    try {
+      const result = await api.get('/user/friend');
+      setFriend(result.data.payload);
+    } catch (error: any) {
+      toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
+      //console.log(error);
+    }
+  };
   const [isOpen, setIsOpen] = useState(false);
   const handleOpen = () => setIsOpen(true);
   const handleClose = () => setIsOpen(false);
@@ -26,15 +37,20 @@ export default function AddChatItem(props: any) {
   };
   const handleClick = async () => {
     try {
-      await api.post('/chat/add', {
-        sender,
-        receiver: willReceive,
+      await api.post('/chat/create', {
+        userIDs: [sender, willReceive],
         message: [],
       });
-    } catch (error) {
+      setIsOpen(false);
+      window.location.reload();
+    } catch (error: any) {
+      toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
       // console.log(error);
     }
   };
+  useEffect(() => {
+    getData();
+  }, [isOpen]);
   return (
     <div>
       <Button onClick={handleOpen} variant='contained'>
@@ -48,21 +64,19 @@ export default function AddChatItem(props: any) {
       >
         <Box sx={style}>
           <Typography id='modal-modal-title' variant='h6' component='h2'>
-            Text in a modal
+            Create Chat
           </Typography>
-          <div className='flex flex-row justify-between'>
+          <div className='mt-1 flex flex-row justify-between'>
             <FormControl fullWidth>
-              <InputLabel id='demo-simple-select-label'>User</InputLabel>
-              <Select
-                labelId='demo-simple-select-label'
-                id='demo-simple-select'
-                value={willReceive}
-                label='User'
-                onChange={handleChange}
-              >
-                <MenuItem value={'10'}>Ten</MenuItem>
-                <MenuItem value={'20'}>Twenty</MenuItem>
-                <MenuItem value={'30'}>Thirty</MenuItem>
+              <InputLabel id='select-label'>Friend</InputLabel>
+              <Select labelId='select-label' id='select' value={willReceive} label='Friend' onChange={handleChange}>
+                {friend.map((item: any, index: number) => {
+                  return (
+                    <MenuItem value={item.id} key={index}>
+                      {item.fullName ? item.fullName : 'User'}
+                    </MenuItem>
+                  );
+                })}
               </Select>
             </FormControl>
             <Button variant='contained' disabled={willReceive.length <= 0 && true} onClick={handleClick}>
