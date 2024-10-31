@@ -10,15 +10,15 @@ import SideBar from '@/components/SideBar';
 export default function Calendar() {
   return (
     <div>
-      <div className='flex h-screen flex-col justify-start'>
+      <div className='flex h-screen flex-col justify-start '>
         {/* HEADER */}
         <Header />
         {/* BODY */}
-        <div className='flex h-full flex-row '>
+        <div className='flex h-full w-full flex-row  '>
           <SideBar />
-          <div>
+          <div className='w-full'>
             <Typography variant='h3'>CALENDAR</Typography>
-            <div className='p-1'>
+            <div className='bg-black'>
               <CalendarGrid />
             </div>
           </div>
