@@ -21,10 +21,8 @@ type ProfileProps = {
 export default function InputList(props: ProfileProps) {
   const { fullName, email, birthday, setFullName, setEmail, setBirthday, setIsEdit } = props;
   const handleChange = (value: any, method: any) => {
-    if (value) {
-      setIsEdit(true);
-      method(value);
-    }
+    setIsEdit(true);
+    method(value);
   };
   return (
     <div className='w-full'>
@@ -36,6 +34,7 @@ export default function InputList(props: ProfileProps) {
           value={fullName}
           fullWidth
           onChange={(e) => handleChange(e.target.value, setFullName)}
+          type='text'
         />
       </div>
       <div className='flex w-full  flex-col justify-between lg:flex-row'>
@@ -60,7 +59,10 @@ export default function InputList(props: ProfileProps) {
             label='Email'
             value={email}
             fullWidth
+            error={email.length <= 0 ? true : false}
+            helperText={email.length <= 0 ? 'Email must be included' : ''}
             onChange={(e) => handleChange(e.target.value, setEmail)}
+            type='text'
           />
         </div>
       </div>
