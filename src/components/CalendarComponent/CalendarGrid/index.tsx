@@ -33,31 +33,31 @@ const colors = [
 //   },
 // };
 export default function CalendarGrid() {
-  const oldParticipants = [
-    { name: '1', id: 1 },
-    { name: '2', id: 2 },
-    { name: '3', id: 3 },
-    { name: '4', id: 4 },
-  ];
+  // const oldParticipants = [
+  //   { name: '1', id: 1 },
+  //   { name: '2', id: 2 },
+  //   { name: '3', id: 3 },
+  //   { name: '4', id: 4 },
+  // ];
 
   const [calendar, setCalendar] = useState<DayPilot.Calendar>();
 
-  const editEvent = async (e: DayPilot.Event) => {
-    const form = [
-      { name: 'Event text', id: 'text', type: 'text' },
-      { name: 'Event color', id: 'backColor', type: 'select', options: colors },
-      { name: 'Number of participants', id: 'tags.participants', type: 'select', options: oldParticipants },
-    ];
+  // const editEvent = async (e: DayPilot.Event) => {
+  //   const form = [
+  //     { name: 'Event text', id: 'text', type: 'text' },
+  //     { name: 'Event color', id: 'backColor', type: 'select', options: colors },
+  //     { name: 'Number of participants', id: 'tags.participants', type: 'select', options: oldParticipants },
+  //   ];
 
-    const modal = await DayPilot.Modal.form(form, e.data);
-    if (modal.canceled) {
-      return;
-    }
-    e.data.text = modal.result.text;
-    e.data.backColor = modal.result.backColor;
-    e.data.tags.participants = modal.result.tags.participants;
-    calendar?.events.update(e);
-  };
+  //   const modal = await DayPilot.Modal.form(form, e.data);
+  //   if (modal.canceled) {
+  //     return;
+  //   }
+  //   e.data.text = modal.result.text;
+  //   e.data.backColor = modal.result.backColor;
+  //   e.data.tags.participants = modal.result.tags.participants;
+  //   calendar?.events.update(e);
+  // };
 
   // const contextMenu = new DayPilot.Menu({
   //   items: [
@@ -116,7 +116,7 @@ export default function CalendarGrid() {
     durationBarVisible: false,
   };
 
-  const [config, setConfig] = useState(initialConfig);
+  const [config] = useState(initialConfig);
   const getTask = async () => {
     try {
       const result = await api.get('/task/getAll');
@@ -184,7 +184,7 @@ export default function CalendarGrid() {
   };
   useEffect(() => {
     getTask();
-  }, [calendar]);
+  });
 
   // const onTimeRangeSelected = async (args: DayPilot.CalendarTimeRangeSelectedArgs) => {
   //   const modal = await DayPilot.Modal.prompt('Create a new event:', 'Event 1');
