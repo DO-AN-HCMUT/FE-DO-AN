@@ -18,7 +18,7 @@ export default function Calendar() {
           <SideBar />
           <div className='w-full'>
             <Typography variant='h3'>CALENDAR</Typography>
-            <div className='bg-black'>
+            <div className=' p-1'>
               <CalendarGrid />
             </div>
           </div>
