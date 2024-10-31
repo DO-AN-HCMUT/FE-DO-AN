@@ -7,7 +7,6 @@ import api from '@/services/api';
 
 import InputList from '../InputList';
 import ProjectList from '../ProjectList';
-
 /* eslint-disable no-tabs */
 export default function ProfileLayout() {
   const [fullName, setFullName] = useState<string>('fullName');
@@ -60,9 +59,12 @@ export default function ProfileLayout() {
     }
   };
   const handleSave = () => {
-    uploadImg();
-    updateProfile();
     setIsEdit(false);
+    toast.promise(Promise.all([uploadImg(), updateProfile()]), {
+      loading: 'Loading...',
+      success: <b>Settings saved!</b>,
+      error: <b>Could not save.</b>,
+    });
   };
   const handleChange = (e: any) => {
     const imgLink = e.target.files[0];
@@ -86,10 +88,10 @@ export default function ProfileLayout() {
             <Image
               src={typeof img == 'string' ? img : URL.createObjectURL(img)}
               alt='avatar'
-              width={500}
-              height={200}
+              width={300}
+              height={150}
               style={{ height: '150px' }}
-              className='max-w-full rounded-full border-2 border-solid'
+              className='rounded-lg border-2 border-solid'
             />
           </div>
 
@@ -111,7 +113,7 @@ export default function ProfileLayout() {
         </div>
       </div>
       <ProjectList />
-      <div className='mt-2 w-full'>
+      <div className='mt-2 w-full '>
         <Button variant='contained' color='success' disabled={!isEdit} className='w-full' onClick={() => handleSave()}>
           Save
         </Button>
