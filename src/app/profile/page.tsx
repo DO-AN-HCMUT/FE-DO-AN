@@ -1,9 +1,7 @@
 'use client';
-
 import Header from '@/components/Header';
 import ProfileLayout from '@/components/ProfileComponent/ProfileLayout';
 import SideBar from '@/components/SideBar';
-
 /* eslint-disable no-tabs */
 export default function Profile() {
   return (

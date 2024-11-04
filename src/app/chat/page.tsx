@@ -2,6 +2,7 @@
 /* eslint-disable no-tabs */
 'use client';
 import { Suspense, useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 
 import AddChatItem from '@/components/ChatComponent/AddChatItem';
 import ChatItem from '@/components/ChatComponent/ChatItem';
@@ -20,9 +21,11 @@ export default function Chat() {
   const clickDelete = async (id: string) => {
     try {
       await api.delete(`/chat/${id}/delete`);
+      toast.success('Done');
       setIsDelete(!isDelete);
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
+      toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
     }
   };
   const getConservation = async () => {
@@ -31,8 +34,13 @@ export default function Chat() {
       if (result.data.success) {
         setConservation(result.data.payload);
       }
-    } catch (error) {
-      window.location.href = '/auth/sign-in';
+    } catch (error: any) {
+      console.log(error);
+      toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
+      setTimeout(() => {
+        window.location.href = '/auth/sign-in';
+      }, 4000);
+      //window.location.href = '/auth/sign-in';
     }
   };
   useEffect(() => {
@@ -43,13 +51,13 @@ export default function Chat() {
       {/* HEADER */}
       <Header />
       {/* BODY */}
-      <div className='flex h-screen flex-row '>
+      <div className='flex h-full flex-row '>
         <SideBar />
-        <div className='h-screen w-11/12'>
+        <div className=' w-11/12'>
           <div className='mb-2'>
             <AddChatItem receiver={conservation?.receiver} sender={conservation?.sender} />
           </div>
-          <div className='flex h-screen flex-row justify-between gap-1 lg:gap-0'>
+          <div className='flex h-full flex-row justify-between gap-1 pl-2 lg:gap-0'>
             <div className=' max-h-screen w-6/12 overflow-y-scroll bg-red'>
               {conservation?.receiver?.map((item: string, index: number) => (
                 <ChatItem
@@ -65,9 +73,13 @@ export default function Chat() {
               ))}
             </div>
             <div className='max-h-screen w-6/12'>
-              <Suspense fallback={<Loading />}>
-                <ContentSpace receiver={selectedValue} sender={conservation?.sender} />
-              </Suspense>
+              {selectedValue.length > 0 ? (
+                <Suspense fallback={<Loading />}>
+                  <ContentSpace receiver={selectedValue} sender={conservation?.sender} />
+                </Suspense>
+              ) : (
+                <div className='h-full overflow-auto bg-violet-800' />
+              )}
             </div>
           </div>
         </div>

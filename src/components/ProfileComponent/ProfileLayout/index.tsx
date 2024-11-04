@@ -1,12 +1,12 @@
 import { Button, Typography } from '@mui/material';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
+import toast from 'react-hot-toast';
 
 import api from '@/services/api';
 
 import InputList from '../InputList';
 import ProjectList from '../ProjectList';
-
 /* eslint-disable no-tabs */
 export default function ProfileLayout() {
   const [fullName, setFullName] = useState<string>('fullName');
@@ -23,7 +23,11 @@ export default function ProfileLayout() {
       if (profile.data.payload?.avatar.length > 0) {
         setImg(profile.data.payload.avatar);
       }
-    } catch (error) {
+    } catch (error: any) {
+      toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
+      setTimeout(() => {
+        window.location.href = '/auth/sign-in';
+      }, 4000);
       // console.log(error);
     }
   };
@@ -35,7 +39,8 @@ export default function ProfileLayout() {
         const formData = new FormData();
         formData.append('file', img);
         await api.post('/user/uploadImg', formData);
-      } catch (error) {
+      } catch (error: any) {
+        toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
         // console.log(error);
       }
     }
@@ -48,14 +53,18 @@ export default function ProfileLayout() {
         birthday,
       };
       await api.put('/user/update', userData);
-    } catch (error) {
+    } catch (error: any) {
+      toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
       // console.log(error);
     }
   };
   const handleSave = () => {
-    uploadImg();
-    updateProfile();
     setIsEdit(false);
+    toast.promise(Promise.all([uploadImg(), updateProfile()]), {
+      loading: 'Loading...',
+      success: <b>Settings saved!</b>,
+      error: <b>Could not save.</b>,
+    });
   };
   const handleChange = (e: any) => {
     const imgLink = e.target.files[0];
@@ -79,10 +88,10 @@ export default function ProfileLayout() {
             <Image
               src={typeof img == 'string' ? img : URL.createObjectURL(img)}
               alt='avatar'
-              width={500}
-              height={200}
+              width={300}
+              height={150}
               style={{ height: '150px' }}
-              className='max-w-full rounded-full border-2 border-solid'
+              className='rounded-lg border-2 border-solid'
             />
           </div>
 
@@ -104,7 +113,7 @@ export default function ProfileLayout() {
         </div>
       </div>
       <ProjectList />
-      <div className='mt-2 w-full'>
+      <div className='mt-2 w-full '>
         <Button variant='contained' color='success' disabled={!isEdit} className='w-full' onClick={() => handleSave()}>
           Save
         </Button>
