@@ -3,6 +3,7 @@
 'use client';
 import { Suspense, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+import { io } from 'socket.io-client';
 
 import AddChatItem from '@/components/ChatComponent/AddChatItem';
 import ChatItem from '@/components/ChatComponent/ChatItem';
@@ -18,6 +19,19 @@ export default function Chat() {
   const [conservation, setConservation] = useState<any>([]);
   const [isDelete, setIsDelete] = useState<boolean>(false);
   const [isSelectedItem, setIsSelectedItem] = useState<number>(-1);
+  // let currentUser: any = [];
+  const [currentUser, setCurrentUser] = useState<any>([]);
+  const socket = io(process.env.NEXT_PUBLIC_CHAT_URL as string);
+  if (conservation?.sender) {
+    socket.auth = { username: conservation?.sender };
+
+    socket.on('users', (users) => {
+      setCurrentUser(users.filter((item: any) => item.socketName !== conservation.sender));
+
+      // put the current user first, and then sort by username
+    });
+  }
+
   const clickDelete = async (id: string) => {
     try {
       await api.delete(`/chat/${id}/delete`);
@@ -43,6 +57,8 @@ export default function Chat() {
       //window.location.href = '/auth/sign-in';
     }
   };
+  console.log(currentUser);
+
   useEffect(() => {
     getConservation();
   }, [isDelete]);
@@ -69,13 +85,14 @@ export default function Chat() {
                     setSelectedValue(item);
                   }}
                   isSelect={isSelectedItem === index}
+                  isOnline={currentUser.filter((fragment: any) => fragment.socketName === item).length > 0}
                 />
               ))}
             </div>
             <div className='max-h-screen w-6/12'>
               {selectedValue.length > 0 ? (
                 <Suspense fallback={<Loading />}>
-                  <ContentSpace receiver={selectedValue} sender={conservation?.sender} />
+                  <ContentSpace receiver={selectedValue} sender={conservation?.sender} socket={socket} />
                 </Suspense>
               ) : (
                 <div className='h-full overflow-auto bg-violet-800' />

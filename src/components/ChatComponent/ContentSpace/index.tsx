@@ -3,25 +3,21 @@ import { Avatar, Button, TextField } from '@mui/material';
 import { useEffect, useState } from 'react';
 // eslint-disable-next-line import/no-unresolved
 import toast from 'react-hot-toast';
-import { io } from 'socket.io-client';
 
 import api from '@/services/api';
 
 /* eslint-disable no-tabs */
-export default function ContentSpace(props: any) {
+type ContentSpaceProps = {
+  socket: any;
+  receiver: any;
+  sender: any;
+};
+export default function ContentSpace(props: ContentSpaceProps) {
   const [data, setData] = useState<any>([]);
-  const { receiver, sender } = props;
+  const { receiver, sender, socket } = props;
   // const [willToast, setWillToast] = useState<boolean>(false);
   const [message, setMessage] = useState<string>('');
-  let currentUser: any = [];
-  const socket = io(process.env.NEXT_PUBLIC_CHAT_URL as string);
-  socket.auth = { username: sender };
-
-  socket.on('users', (users) => {
-    currentUser = users.filter((item: any) => item.socketName !== sender);
-    // put the current user first, and then sort by username
-  });
-  socket.on('private', (name) => {
+  socket.on('private', (name: any) => {
     // setReceive([...receive, name]);
     setData([...data, name]);
   });
@@ -53,9 +49,9 @@ export default function ContentSpace(props: any) {
   };
   const handleClick = () => {
     setNewMessage({ userID: sender, content: message });
-    if (currentUser.filter((item: any) => item.socketName === receiver).length > 0) {
-      socket.emit('message', { socketID: sender, content: message });
-    }
+    // if (currentUser.filter((item: any) => item.socketName === receiver).length > 0) {
+    //   socket.emit('message', { socketID: sender, content: message });
+    // }
     setMessage('');
   };
   useEffect(() => {

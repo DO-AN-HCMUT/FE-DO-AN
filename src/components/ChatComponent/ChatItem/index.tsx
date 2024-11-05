@@ -1,4 +1,5 @@
 import DeleteIcon from '@mui/icons-material/Delete';
+import { Chip } from '@mui/material';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -11,10 +12,12 @@ type ChatItemProps = {
   onClickMethod: any;
   deleteMethod: any;
   isSelect: boolean;
+  isOnline: boolean;
 };
 export default function ChatItem(props: ChatItemProps) {
   const [profile, setProfile] = useState<any>('');
-  const { deleteMethod, onClickMethod, isSelect } = props;
+  const { deleteMethod, onClickMethod, isSelect, isOnline } = props;
+
   const getName = async () => {
     try {
       const data = await api.get(`/user/${props.id}`);
@@ -43,6 +46,13 @@ export default function ChatItem(props: ChatItemProps) {
           <Image src={profile.avatar} width={40} height={40} alt='avatar' />
         </div>
         <div className='ml-1'>{profile.fullName?.length > 0 ? profile.fullName : 'Unknow'}</div>
+      </div>
+      <div>
+        {isOnline ? (
+          <Chip label='online' color='success' variant='outlined' />
+        ) : (
+          <Chip label='offline' color='error' variant='outlined' />
+        )}
       </div>
       <div className='cursor-pointer' onClick={() => deleteMethod()}>
         <DeleteIcon />
