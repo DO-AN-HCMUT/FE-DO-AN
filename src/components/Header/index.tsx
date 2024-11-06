@@ -18,14 +18,23 @@ import AuthContext from '@/contexts/auth';
 //   boxShadow: 24,
 //   p: 4,
 // };
-
-export default function Header() {
+type HeaderProps = {
+  socket?: any;
+};
+export default function Header(props: HeaderProps) {
   // const [isOpenModal, setIsOpenModal] = useState(false);
   // const handleOpen = () => setIsOpenModal(true);
   // const handleClose = () => setIsOpenModal(false);
   // const [input, setInput] = useState({ projectName: '', description: '' });
-  const { signOut } = useContext(AuthContext);
+  const { socket } = props;
 
+  const { signOut } = useContext(AuthContext);
+  const handleSignOut = () => {
+    if (socket) {
+      socket.disconnect();
+    }
+    signOut();
+  };
   return (
     <div className='flex w-full items-center justify-between bg-[#3c3c3c] p-4'>
       <Image src='/images/logo.png' alt='logo' width={40} height={40} className='' />
@@ -77,7 +86,7 @@ export default function Header() {
           width={40}
           height={40}
           className='hover:cursor-pointer'
-          onClick={() => signOut()}
+          onClick={() => handleSignOut()}
         />
       </div>
     </div>

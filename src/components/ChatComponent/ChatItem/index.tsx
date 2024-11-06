@@ -12,11 +12,12 @@ type ChatItemProps = {
   onClickMethod: any;
   deleteMethod: any;
   isSelect: boolean;
-  isOnline: boolean;
+  currentUser: any;
 };
 export default function ChatItem(props: ChatItemProps) {
   const [profile, setProfile] = useState<any>('');
-  const { deleteMethod, onClickMethod, isSelect, isOnline } = props;
+  const { deleteMethod, onClickMethod, isSelect, currentUser, id } = props;
+  const [isOnline, setIsOnline] = useState<boolean>(false);
 
   const getName = async () => {
     try {
@@ -29,8 +30,16 @@ export default function ChatItem(props: ChatItemProps) {
   };
   useEffect(() => {
     getName();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  useEffect(() => {
+    if (currentUser.filter((fragment: any) => fragment.socketName === id).length > 0) {
+      setIsOnline(true);
+    } else {
+      setIsOnline(false);
+    }
+  }, [currentUser, id]);
 
   return (
     <div

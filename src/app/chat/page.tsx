@@ -60,10 +60,23 @@ export default function Chat() {
   useEffect(() => {
     getConservation();
   }, [isDelete]);
+  useEffect(() => {
+    const handleWindowClose = (e: any) => {
+      console.log('window clos');
+
+      e.preventDefault();
+      socket.disconnect();
+    };
+    window.addEventListener('beforeunload', handleWindowClose);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleWindowClose);
+    };
+  });
   return (
     <div className='flex h-screen flex-col justify-start'>
       {/* HEADER */}
-      <Header />
+      <Header socket={socket} />
       {/* BODY */}
       <div className='flex h-full flex-row '>
         <SideBar />
@@ -83,7 +96,7 @@ export default function Chat() {
                     setSelectedValue(item);
                   }}
                   isSelect={isSelectedItem === index}
-                  isOnline={currentUser.filter((fragment: any) => fragment.socketName === item).length > 0}
+                  currentUser={currentUser}
                 />
               ))}
             </div>
