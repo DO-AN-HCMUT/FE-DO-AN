@@ -15,6 +15,7 @@ type ContentSpaceProps = {
 export default function ContentSpace(props: ContentSpaceProps) {
   const [data, setData] = useState<any>([]);
   const { receiver, sender, socket } = props;
+
   // const [willToast, setWillToast] = useState<boolean>(false);
   const [message, setMessage] = useState<string>('');
   socket.on('private', (name: any) => {
@@ -58,32 +59,35 @@ export default function ContentSpace(props: ContentSpaceProps) {
     getData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props]);
+
   return (
     <div className='h-full'>
-      <div className='h-5/6 overflow-auto bg-violet-800'>
-        {data?.length > 0 ? (
-          data.map((item: any, index: number) => (
-            <div key={index}>
-              {item.userID === receiver ? (
-                <div className=' flex flex-row  '>
-                  <Avatar>target</Avatar>
-                  <div className=' mx-1 w-5/12 overflow-auto  rounded-lg border-2 border-solid border-gray-200 bg-gray-500 p-2 text-slate-50'>
-                    {item.content}
+      <div className='flex h-5/6 flex-col-reverse overflow-auto bg-violet-800'>
+        <div>
+          {data?.length > 0 ? (
+            data.map((item: any, index: number) => (
+              <div key={index}>
+                {item.userID === receiver ? (
+                  <div className=' flex flex-row  '>
+                    <Avatar>target</Avatar>
+                    <div className=' mx-1 w-5/12 overflow-auto  rounded-lg border-2 border-solid border-gray-200 bg-gray-500 p-2 text-slate-50'>
+                      {item.content}
+                    </div>
                   </div>
-                </div>
-              ) : (
-                <div className='flex flex-row-reverse  '>
-                  <Avatar>me</Avatar>
-                  <div className=' mx-1 w-5/12 overflow-auto  rounded-lg border-2 border-solid border-gray-200 bg-teal-200 p-2'>
-                    {item.content}
+                ) : (
+                  <div className='flex flex-row-reverse  '>
+                    <Avatar>me</Avatar>
+                    <div className=' mx-1 w-5/12 overflow-auto  rounded-lg border-2 border-solid border-gray-200 bg-teal-200 p-2'>
+                      {item.content}
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
-          ))
-        ) : (
-          <></>
-        )}
+                )}
+              </div>
+            ))
+          ) : (
+            <></>
+          )}
+        </div>
       </div>
       {receiver.length > 0 ? (
         <div className=' flex flex-row justify-between px-0 pt-3 '>

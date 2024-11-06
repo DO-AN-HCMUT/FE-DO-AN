@@ -57,8 +57,6 @@ export default function Chat() {
       //window.location.href = '/auth/sign-in';
     }
   };
-  console.log(currentUser);
-
   useEffect(() => {
     getConservation();
   }, [isDelete]);
