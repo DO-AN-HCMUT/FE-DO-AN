@@ -1,5 +1,6 @@
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Avatar } from '@mui/material';
+import { Chip } from '@mui/material';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 
@@ -11,14 +12,17 @@ type ChatItemProps = {
   onClickMethod: any;
   deleteMethod: any;
   isSelect: boolean;
+  currentUser: any;
 };
 export default function ChatItem(props: ChatItemProps) {
-  const [isName, setIsName] = useState<string>('');
-  const { deleteMethod, onClickMethod, isSelect } = props;
+  const [profile, setProfile] = useState<any>('');
+  const { deleteMethod, onClickMethod, isSelect, currentUser, id } = props;
+  const [isOnline, setIsOnline] = useState<boolean>(false);
+
   const getName = async () => {
     try {
       const data = await api.get(`/user/${props.id}`);
-      setIsName(data.data.payload.fullName);
+      setProfile(data.data.payload);
     } catch (error: any) {
       toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
       // console.log(error);
@@ -26,21 +30,38 @@ export default function ChatItem(props: ChatItemProps) {
   };
   useEffect(() => {
     getName();
-  });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  useEffect(() => {
+    if (currentUser.filter((fragment: any) => fragment.socketName === id).length > 0) {
+      setIsOnline(true);
+    } else {
+      setIsOnline(false);
+    }
+  }, [currentUser, id]);
 
   return (
     <div
-      className='mb-2 flex flex-row items-center justify-between rounded-lg border-4 border-solid border-zinc-950 bg-slate-50 p-2'
-      style={{ borderColor: isSelect ? 'rgb(21 128 61)' : 'transparent' }}
+      className='mb-2 flex flex-row items-center justify-between rounded-lg border-4 border-solid  bg-slate-50 p-2'
+      style={{ borderColor: isSelect ? 'rgb(21 128 61)' : 'rgb(56 189 248)' }}
       onClick={() => {
         onClickMethod();
       }}
     >
       <div className='flex w-9/12 cursor-pointer flex-row items-center'>
         <div>
-          <Avatar> logo</Avatar>
+          {/* <Avatar> logo</Avatar> */}
+          <Image src={profile.avatar} width={40} height={40} alt='avatar' />
         </div>
-        <div className='ml-1'>{isName.length > 0 ? isName : 'Unknow'}</div>
+        <div className='ml-1'>{profile.fullName?.length > 0 ? profile.fullName : 'Unknow'}</div>
+      </div>
+      <div>
+        {isOnline ? (
+          <Chip label='online' color='success' variant='outlined' />
+        ) : (
+          <Chip label='offline' color='error' variant='outlined' />
+        )}
       </div>
       <div className='cursor-pointer' onClick={() => deleteMethod()}>
         <DeleteIcon />

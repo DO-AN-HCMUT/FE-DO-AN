@@ -35,11 +35,11 @@ export default function MePage() {
   if (!isAuthStatusReady) return null;
 
   return (
-    <div className='h-screen'>
+    <div className='justify-star flex h-screen flex-col '>
       {/* HEADER */}
       <Header />
       {/* BODY */}
-      <div className='flex h-full'>
+      <div className='flex h-full flex-row'>
         <SideBar />
         {/* CONTENT */}
         <div className='flex w-11/12 items-stretch bg-[#eee] px-10 py-12'>
