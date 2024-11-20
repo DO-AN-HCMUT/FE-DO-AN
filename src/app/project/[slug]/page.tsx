@@ -1,5 +1,5 @@
 'use client';
-import { useSearchParams } from 'next/navigation';
+// import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 
@@ -9,15 +9,17 @@ import api from '@/services/api';
 
 /* eslint-disable no-tabs */
 // eslint-disable-next-line @next/next/no-async-client-component
-export default function DetailProject() {
+export default function DetailProject({ params }: { params: { slug: string } }) {
   const [projectData, setProjectData] = useState<any>([]);
-  const searchParams = useSearchParams();
+  // const searchParams = useSearchParams();
 
-  const id = searchParams.get('id');
+  // const id = searchParams.get('id');
+  const { slug } = params;
+
   const getData = async () => {
-    if (id) {
+    if (slug) {
       try {
-        const result = await api.get(`/project/${id}/get`);
+        const result = await api.get(`/project/${slug}/get`);
         setProjectData(result.data.payload);
       } catch (error: any) {
         toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
@@ -28,7 +30,7 @@ export default function DetailProject() {
   useEffect(() => {
     getData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
+  }, [slug]);
   return (
     <div>
       <div className='flex h-screen flex-col justify-start'>
@@ -38,7 +40,7 @@ export default function DetailProject() {
         <div className='flex h-screen flex-row  '>
           <SideBar />
           <div className='w-full'>
-            {id}
+            {slug}
             <div>{projectData.projectName}</div>
           </div>
         </div>
