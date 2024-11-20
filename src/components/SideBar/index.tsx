@@ -37,6 +37,15 @@ export default function SideBar() {
         </Link>
       </Tooltip>
 
+      <Tooltip title='Projects' disableHoverListener={!isMdOrSmaller}>
+        <Link
+          className='mb-3 flex items-center justify-center rounded-lg px-4 py-2 hover:bg-primary hover:text-white md:justify-normal'
+          href='/projects'
+        >
+          <Image src='/images/sideBar/project.png' alt='projects' width={20} height={20} className='me-3' />
+          <p className='hidden md:inline'>Projects</p>
+        </Link>
+      </Tooltip>
       <Tooltip title='Messages' disableHoverListener={!isMdOrSmaller}>
         <Link
           className='mb-3 flex items-center justify-center rounded-lg px-4 py-2 hover:bg-primary hover:text-white md:justify-normal'
