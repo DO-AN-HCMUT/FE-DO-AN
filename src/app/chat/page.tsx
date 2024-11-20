@@ -21,6 +21,7 @@ export default function Chat() {
   const [isSelectedItem, setIsSelectedItem] = useState<number>(-1);
   // let currentUser: any = [];
   const [currentUser, setCurrentUser] = useState<any>([]);
+
   const socket = io(process.env.NEXT_PUBLIC_CHAT_URL as string);
   if (conservation?.sender) {
     socket.auth = { username: conservation?.sender };

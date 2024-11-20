@@ -36,6 +36,7 @@ export default function ContentSpace(props: ContentSpaceProps) {
       // window.location.href = '/auth/sign-in';
     }
   };
+
   const setNewMessage = async (newContent: any) => {
     try {
       await api.put('/chat/addMess', {
