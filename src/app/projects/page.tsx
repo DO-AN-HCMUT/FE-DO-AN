@@ -56,7 +56,7 @@ export default function Projects() {
   };
   const goToProject = (name: string) => {
     // window.localStorage.setItem('currentProject', name);
-    router.push(`/${name}`);
+    router.push(`/project?id=${name}`);
   };
   useEffect(() => {
     getData();
