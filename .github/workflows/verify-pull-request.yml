@@ -81,4 +81,4 @@ jobs:
 
       - name: Lint check
         run: |
-          npx eslint ${{ steps.add-quotes.outputs.modified_files }}
+          npx eslint src/**/*.{js,jsx,ts,tsx}
