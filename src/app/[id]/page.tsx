@@ -8,7 +8,7 @@ import api from '@/services/api';
 
 /* eslint-disable no-tabs */
 // eslint-disable-next-line @next/next/no-async-client-component
-export default async function DetailProject({ params }: { params: any }) {
+export default function DetailProject({ params }: { params: any }) {
   const [projectData, setProjectData] = useState<any>([]);
   const { id } = params;
 
