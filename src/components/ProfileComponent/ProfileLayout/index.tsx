@@ -32,7 +32,7 @@ export default function ProfileLayout() {
     }
   };
 
-  const inputFile = useRef(null);
+  const inputFile = useRef<HTMLInputElement>(null);
   const uploadImg = async () => {
     if (typeof img !== 'string') {
       try {
