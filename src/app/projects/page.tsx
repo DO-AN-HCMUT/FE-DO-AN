@@ -1,5 +1,6 @@
 'use client';
 import { Box, Button, Modal, Typography } from '@mui/material';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 
@@ -27,6 +28,8 @@ export default function Projects() {
   const handleOpen = () => setIsOpenModal(true);
   const handleClose = () => setIsOpenModal(false);
   const [input, setInput] = useState({ projectName: '' });
+  const router = useRouter();
+
   const handleSubmit = async () => {
     try {
       const payload = {
@@ -51,6 +54,10 @@ export default function Projects() {
       }, 4000);
     }
   };
+  const goToProject = (name: string) => {
+    // window.localStorage.setItem('currentProject', name);
+    router.push(`/project?id=${name}`);
+  };
   useEffect(() => {
     getData();
   }, []);
@@ -73,7 +80,7 @@ export default function Projects() {
               {projectList?.map((item: any, index: number) => {
                 return (
                   <div key={index}>
-                    <ListItem projectName={item.projectName} />
+                    <ListItem projectName={item.projectName} onClickFunction={() => goToProject(item._id)} />
                   </div>
                 );
               })}
