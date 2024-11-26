@@ -77,8 +77,8 @@ export default function Header(props: HeaderProps) {
           </Box>
         </Modal> */}
         <Image src='/images/header/bell.png' alt='notification' width={40} height={40} className='me-4' />
-        <Link href='/profile'>
-          <Image src='/images/header/avatar.jpeg' alt='profile' width={40} height={40} className='me-4 rounded-full' />
+        <Link href='/profile' className='mr-1 w-[40px] rounded-full hover:bg-sky-500'>
+          <Image src='/images/header/account.svg' alt='profile' width={40} height={40} className='me-4 rounded-full' />
         </Link>
         <Image
           src='/icons/logout.svg'
