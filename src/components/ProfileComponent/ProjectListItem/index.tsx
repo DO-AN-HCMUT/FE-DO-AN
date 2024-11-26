@@ -1,4 +1,5 @@
 import { Typography } from '@mui/material';
+import { useRouter } from 'next/navigation';
 
 /* eslint-disable no-tabs */
 type ProjectProps = {
@@ -6,6 +7,10 @@ type ProjectProps = {
 };
 export default function ProjectListItem(props: ProjectProps) {
   const { data } = props;
+  const router = useRouter();
+  const onClickHandle = (item: any) => {
+    router.push(`/project?id=${item._id}`);
+  };
   return (
     <div>
       {data.length > 0 ? (
@@ -15,6 +20,7 @@ export default function ProjectListItem(props: ProjectProps) {
               <div
                 className='mb-2 cursor-pointer rounded border-2 border-solid  border-black hover:shadow-lg'
                 key={index}
+                onClick={() => onClickHandle(item)}
               >
                 <Typography variant='h4' className='text-sky-300'>
                   {item?.projectName}
