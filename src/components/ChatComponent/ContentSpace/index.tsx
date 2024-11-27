@@ -32,8 +32,11 @@ export default function ContentSpace(props: ContentSpaceProps) {
       }
     } catch (error: any) {
       // console.log(error);
-      toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
-      // window.location.href = '/auth/sign-in';
+      if (error?.response?.data.message === 'TokenExpiredError') {
+        toast.error('Please log in', { position: 'bottom-center' });
+      } else {
+        toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
+      } // window.location.href = '/auth/sign-in';
     }
   };
 
@@ -45,8 +48,11 @@ export default function ContentSpace(props: ContentSpaceProps) {
         message: newContent,
       });
     } catch (error: any) {
-      toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
-      // console.log(error);
+      if (error?.response?.data.message === 'TokenExpiredError') {
+        toast.error('Please log in', { position: 'bottom-center' });
+      } else {
+        toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
+      } // console.log(error);
     }
   };
   const handleClick = () => {

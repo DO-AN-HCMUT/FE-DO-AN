@@ -40,7 +40,11 @@ export default function Projects() {
       await api.post('/project/new', payload);
       toast.success('Done');
     } catch (error: any) {
-      toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
+      if (error?.response?.data.message === 'TokenExpiredError') {
+        toast.error('Please log in', { position: 'bottom-center' });
+      } else {
+        toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
+      }
     }
   };
   const getData = async () => {
@@ -48,10 +52,14 @@ export default function Projects() {
       const dataList = await api.get('/user/projects');
       setProjectList(dataList.data.payload);
     } catch (error: any) {
-      toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
-      setTimeout(() => {
-        window.location.href = '/auth/sign-in';
-      }, 4000);
+      if (error?.response?.data.message === 'TokenExpiredError') {
+        toast.error('Please log in', { position: 'bottom-center' });
+        setTimeout(() => {
+          window.location.href = '/auth/sign-in';
+        }, 4000);
+      } else {
+        toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
+      }
     }
   };
   const goToProject = (name: string) => {
