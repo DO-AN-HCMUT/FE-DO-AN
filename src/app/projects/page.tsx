@@ -27,15 +27,25 @@ export default function Projects() {
   const [isOpenModal, setIsOpenModal] = useState(false);
   const handleOpen = () => setIsOpenModal(true);
   const handleClose = () => setIsOpenModal(false);
-  const [input, setInput] = useState({ projectName: '' });
+  // const [input, setInput] = useState({ projectName: '' });
+  const [projectName, setProjectName] = useState('');
+  const [projectCode, setProjectCode] = useState('');
   const router = useRouter();
+
+  // const code = projectName
+  //   .split(" ")
+  //   .slice(0, 3)
+  //   .map((word) => word[0])
+  //   .join("")
+  //   .toUpperCase();
 
   const handleSubmit = async () => {
     try {
       const payload = {
         members: [],
         taskIDs: [],
-        projectName: input.projectName,
+        projectName,
+        projectCode,
       };
       await api.post('/project/new', payload);
       toast.success('Done');
@@ -73,7 +83,7 @@ export default function Projects() {
             <div>
               <Typography variant='h2'>PROJECTS</Typography>
             </div>
-            <div className='grid grid-cols-4   gap-4 overflow-auto p-9'>
+            <div className='grid grid-cols-4 gap-4 overflow-auto p-9'>
               <div>
                 <ListItem onClickFunction={handleOpen} />
               </div>
@@ -92,18 +102,31 @@ export default function Projects() {
               aria-describedby='modal-modal-description'
             >
               <Box sx={style}>
-                <Typography id='modal-modal-title' variant='h6' component='h1'>
+                <Typography id='modal-modal-title' variant='h5' component='h1'>
                   Create Project
                 </Typography>
                 <div className='flex w-full flex-col items-stretch justify-between pt-5'>
                   <form onSubmit={handleSubmit}>
-                    <div className='flex grow flex-col justify-center pb-5'>
+                    <div className='flex grow flex-col justify-center'>
+                      <p className='mb-2 ps-1 font-semibold'>Project Name</p>
                       <TextInput
                         className='mb-8'
-                        placeholder='Project Name'
-                        value={input.projectName}
+                        placeholder='Enter project name'
+                        value={projectName}
                         onInput={(projectName) => {
-                          setInput({ ...input, projectName });
+                          setProjectName(projectName);
+                        }}
+                        type='text'
+                      />
+                    </div>
+                    <div className='flex grow flex-col justify-center'>
+                      <p className='mb-2 ps-1 font-semibold'>Project Code</p>
+                      <TextInput
+                        className='mb-8'
+                        placeholder='Enter project code'
+                        value={projectCode}
+                        onInput={(projectCode) => {
+                          setProjectCode(projectCode);
                         }}
                         type='text'
                       />

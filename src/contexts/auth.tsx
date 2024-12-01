@@ -11,7 +11,7 @@ import User from '@/types/user';
 type AuthContextProps = {
   meProfile: User | null;
   signIn: (payload: { email: string; password: string }) => Promise<any>;
-  signUp: (payload: { email: string; password: string }) => Promise<any>;
+  signUp: (payload: { email: string; password: string; fullName: string }) => Promise<any>;
   signOut: () => void;
 };
 
@@ -39,7 +39,7 @@ export function AuthContextProvider({ children }: { children: ReactNode }) {
   );
 
   const signUp = useCallback(
-    async (payload: { email: string; password: string }) => {
+    async (payload: { email: string; password: string; fullName: string }) => {
       const response = await authService.signUp(payload);
 
       if (response.accessToken) {

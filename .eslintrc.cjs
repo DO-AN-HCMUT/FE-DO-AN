@@ -293,6 +293,7 @@ module.exports = {
       files: ['**/*.tsx'],
       plugins: ['react'],
       rules: {
+        '@typescript-eslint/no-shadow': 'off',
         'react/prop-types': 'off',
         'max-lines': ['error', 300],
         'max-lines-per-function': [
