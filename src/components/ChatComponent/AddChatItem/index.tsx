@@ -24,8 +24,11 @@ export default function AddChatItem(props: any) {
       const result = await api.get('/user/friend');
       setFriend(result.data.payload);
     } catch (error: any) {
-      toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
-      //console.log(error);
+      if (error?.response?.data.message === 'TokenExpiredError') {
+        toast.error('Please log in', { position: 'bottom-center' });
+      } else {
+        toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
+      } //console.log(error);
     }
   };
   const [isOpen, setIsOpen] = useState(false);
@@ -44,8 +47,11 @@ export default function AddChatItem(props: any) {
       setIsOpen(false);
       window.location.reload();
     } catch (error: any) {
-      toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
-      // console.log(error);
+      if (error?.response?.data.message === 'TokenExpiredError') {
+        toast.error('Please log in', { position: 'bottom-center' });
+      } else {
+        toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
+      } // console.log(error);
     }
   };
   useEffect(() => {

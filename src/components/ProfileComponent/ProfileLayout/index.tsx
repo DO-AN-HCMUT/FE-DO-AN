@@ -24,10 +24,14 @@ export default function ProfileLayout() {
         setImg(profile.data.payload.avatar);
       }
     } catch (error: any) {
-      toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
-      setTimeout(() => {
-        window.location.href = '/auth/sign-in';
-      }, 4000);
+      if (error?.response?.data.message === 'TokenExpiredError') {
+        toast.error('Please log in', { position: 'bottom-center' });
+        setTimeout(() => {
+          window.location.href = '/auth/sign-in';
+        }, 4000);
+      } else {
+        toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
+      }
       // console.log(error);
     }
   };
@@ -40,8 +44,11 @@ export default function ProfileLayout() {
         formData.append('file', img);
         await api.post('/user/uploadImg', formData);
       } catch (error: any) {
-        toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
-        // console.log(error);
+        if (error?.response?.data.message === 'TokenExpiredError') {
+          toast.error('Please log in', { position: 'bottom-center' });
+        } else {
+          toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
+        } // console.log(error);
       }
     }
   };
@@ -54,8 +61,11 @@ export default function ProfileLayout() {
       };
       await api.put('/user/update', userData);
     } catch (error: any) {
-      toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
-      // console.log(error);
+      if (error?.response?.data.message === 'TokenExpiredError') {
+        toast.error('Please log in', { position: 'bottom-center' });
+      } else {
+        toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
+      } // console.log(error);
     }
   };
   const handleSave = () => {

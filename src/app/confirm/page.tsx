@@ -24,10 +24,14 @@ export default function Confirm() {
     try {
       await api.post(`/project/${projectId}/verify`);
       setIsError(false);
-      toast.success('Success');
+      toast.success('Success', { position: 'bottom-center' });
     } catch (error: any) {
       setIsError(true);
-      toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
+      if (error?.response?.data.message === 'TokenExpiredError') {
+        toast.error('Please log in', { position: 'bottom-center' });
+      } else {
+        toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
+      }
     }
   };
 

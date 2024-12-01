@@ -39,8 +39,11 @@ export default function Chat() {
       toast.success('Done');
       setIsDelete(!isDelete);
     } catch (error: any) {
-      console.log(error);
-      toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
+      if (error?.response?.data.message === 'TokenExpiredError') {
+        toast.error('Please log in', { position: 'bottom-center' });
+      } else {
+        toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
+      }
     }
   };
   const getConservation = async () => {
@@ -50,11 +53,14 @@ export default function Chat() {
         setConservation(result.data.payload);
       }
     } catch (error: any) {
-      console.log(error);
-      toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
-      setTimeout(() => {
-        window.location.href = '/auth/sign-in';
-      }, 4000);
+      if (error?.response?.data.message === 'TokenExpiredError') {
+        toast.error('Please log in', { position: 'bottom-center' });
+        setTimeout(() => {
+          window.location.href = '/auth/sign-in';
+        }, 4000);
+      } else {
+        toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
+      }
       //window.location.href = '/auth/sign-in';
     }
   };

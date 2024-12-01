@@ -42,7 +42,11 @@ export default function TaskList() {
       const result = await api.get(`/task/getAll?search=${encodeURI(searchItem)}`);
       setTaskData(result.data.payload);
     } catch (error: any) {
-      toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
+      if (error?.response?.data.message === 'TokenExpiredError') {
+        toast.error('Please log in', { position: 'bottom-center' });
+      } else {
+        toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
+      }
     }
   };
   const formatData = () => {
