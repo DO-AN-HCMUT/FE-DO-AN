@@ -21,8 +21,8 @@ import TaskStatusType from '@/types/task-status';
 
 /* eslint-disable no-tabs */
 // eslint-disable-next-line max-params
-function createData(title: string, code: number, status: number, deadline: number, project: number) {
-  return { title, code, status, deadline, project };
+function createData(title: string, key: number, status: number, deadline: number, project: number) {
+  return { title, key, status, deadline, project };
 }
 
 export default function TaskList() {
@@ -42,10 +42,9 @@ export default function TaskList() {
   };
   const formatData = () => {
     return taskData.map((item: any) => {
-      return createData(item.title, item.code, item.status, item.endDate, item.result[0].projectName);
+      return createData(item.title, item.key, item.status, item.endDate, item.result[0].name);
     });
   };
-
   useEffect(() => {
     getTaskData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -96,7 +95,7 @@ export default function TaskList() {
                   <TableCell component='th' scope='row'>
                     {row.title}
                   </TableCell>
-                  <TableCell align='right'>{row.code}</TableCell>
+                  <TableCell align='right'>{row.key}</TableCell>
                   <TableCell align='right'>
                     <Chip
                       label={row.status}
@@ -106,7 +105,7 @@ export default function TaskList() {
                       }}
                     />
                   </TableCell>
-                  <TableCell align='right'>{new Date(row.deadline).toLocaleString()}</TableCell>
+                  <TableCell align='right'>{new Date(row.deadline).toLocaleDateString()}</TableCell>
                   <TableCell align='right'>{row.project}</TableCell>
                 </TableRow>
               ))}
