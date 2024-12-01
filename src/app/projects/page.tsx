@@ -70,8 +70,7 @@ export default function Projects() {
   };
 
   const goToProject = (name: string) => {
-    // window.localStorage.setItem('currentProject', name);
-    router.push(`/project?id=${name}`);
+    router.push(`/projects/tasks?project-id=${name}`);
   };
 
   useEffect(() => {
