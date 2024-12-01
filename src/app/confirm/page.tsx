@@ -15,20 +15,22 @@ export default function Confirm() {
   const searchParams = useSearchParams();
   const [isError, setIsError] = useState<boolean>(false);
   const projectName = searchParams.get('projectName');
-  const projectId = searchParams.get('projectID');
+  const projectId = searchParams.get('projectId');
+  const memberId = searchParams.get('memberId');
+
   const router = useRouter();
   const goHome = () => {
     router.push('/');
   };
   const addMember = async () => {
     try {
-      await api.post(`/project/${projectId}/verify`);
+      await api.post(`/project/${projectId}/verify?memberId=${memberId}`);
       setIsError(false);
       toast.success('Success', { position: 'bottom-center' });
     } catch (error: any) {
       setIsError(true);
       if (error?.response?.data.message === 'TokenExpiredError') {
-        toast.error('Please log in', { position: 'bottom-center' });
+        toast.error('Please sign in', { position: 'bottom-center' });
       } else {
         toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
       }
@@ -58,9 +60,10 @@ export default function Confirm() {
         ) : (
           <div>
             You do not log in so please{' '}
-            <Link className='text-sky-500 underline decoration-sky-500 underline-offset-2' href={'/auth/sign-in'}>
+            <Link className='mx-1 text-sky-500 underline decoration-sky-500 underline-offset-2' href={'/auth/sign-in'}>
               sign in
             </Link>
+            and return this page
           </div>
         )}
       </div>

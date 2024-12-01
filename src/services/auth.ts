@@ -6,7 +6,7 @@ const signIn = async (payload: { email: string; password: string }) => {
   return (await api.post('/auth/sign-in', payload)).data;
 };
 
-const signUp = async (payload: { email: string; password: string }) => {
+const signUp = async (payload: { email: string; password: string; fullName: string }) => {
   return (await api.post('/auth/sign-up', payload)).data;
 };
 

@@ -14,7 +14,10 @@ import {
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 
+import { TASK_STATUS_COLOR } from '@/constants/common';
 import api from '@/services/api';
+
+import TaskStatusType from '@/types/task-status';
 
 /* eslint-disable no-tabs */
 // eslint-disable-next-line max-params
@@ -23,18 +26,6 @@ function createData(title: string, code: number, status: number, deadline: numbe
 }
 
 export default function TaskList() {
-  const chipColor = [
-    { status: 'TO_DO', color: '#e3f2fd' },
-    { status: 'IN_PROGRESS', color: '#42a5f5' },
-    { status: 'FIXING', color: '#ffa726' },
-    { status: 'FIXED', color: '#66bb6a' },
-    { status: 'TO_TEST', color: '#46b8ae' },
-    { status: 'TESTED', color: '#b8c91e' },
-    { status: 'ERROR', color: '#c9241e' },
-    { status: 'DONE', color: '#14d917' },
-    { status: 'QA', color: '#badb37' },
-    { status: 'URGENT', color: '#f02244' },
-  ];
   const [taskData, setTaskData] = useState<any>([]);
   const [searchItem, setSearchItem] = useState<string>('');
   const getTaskData = async () => {
@@ -54,6 +45,7 @@ export default function TaskList() {
       return createData(item.title, item.code, item.status, item.endDate, item.result[0].projectName);
     });
   };
+
   useEffect(() => {
     getTaskData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -61,7 +53,7 @@ export default function TaskList() {
   return (
     <div className='p-1'>
       <div>
-        <Typography variant='h2'>TASK</Typography>
+        <Typography variant='h2'>MY TASK</Typography>
       </div>
       <div>
         <div className='flex flex-row'>
@@ -72,6 +64,7 @@ export default function TaskList() {
             value={searchItem}
             fullWidth
             onChange={(e) => setSearchItem(e.target.value)}
+            disabled={formatData().length === 0}
           />
         </div>
       </div>
@@ -107,7 +100,10 @@ export default function TaskList() {
                   <TableCell align='right'>
                     <Chip
                       label={row.status}
-                      style={{ backgroundColor: `${chipColor.filter((item) => item.status === row.status)[0].color}` }}
+                      style={{
+                        backgroundColor: `${TASK_STATUS_COLOR[row.status as TaskStatusType].backgroundColor}`,
+                        color: `${TASK_STATUS_COLOR[row.status as TaskStatusType].color}`,
+                      }}
                     />
                   </TableCell>
                   <TableCell align='right'>{new Date(row.deadline).toLocaleString()}</TableCell>
@@ -117,6 +113,11 @@ export default function TaskList() {
             </TableBody>
           </Table>
         </TableContainer>
+        {formatData().length === 0 ? (
+          <div className='mt-1 h-[50px] rounded-[4px] border bg-[#FFFFFF] text-center'>No Task</div>
+        ) : (
+          <></>
+        )}
       </div>
     </div>
   );
