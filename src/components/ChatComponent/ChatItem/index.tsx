@@ -24,8 +24,11 @@ export default function ChatItem(props: ChatItemProps) {
       const data = await api.get(`/user/${props.id}`);
       setProfile(data.data.payload);
     } catch (error: any) {
-      toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
-      // console.log(error);
+      if (error?.response?.data.message === 'TokenExpiredError') {
+        toast.error('Please log in', { position: 'bottom-center' });
+      } else {
+        toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
+      } // console.log(error);
     }
   };
   useEffect(() => {
