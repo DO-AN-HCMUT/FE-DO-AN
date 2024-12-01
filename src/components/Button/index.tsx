@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { ReactNode } from 'react';
+import { ButtonHTMLAttributes, ReactNode } from 'react';
 
 type ButtonProps = {
   children: ReactNode;
@@ -9,6 +9,7 @@ type ButtonProps = {
   width?: 'fit' | 'full';
   type?: 'positive' | 'negative' | 'neutral-positive' | 'neutral-negative';
   tabIndex?: number;
+  buttonProps?: ButtonHTMLAttributes<HTMLButtonElement>;
 };
 
 export default function Button({
@@ -19,6 +20,7 @@ export default function Button({
   width = 'fit',
   type = 'positive',
   tabIndex,
+  buttonProps,
 }: ButtonProps) {
   const buttonClass = clsx(
     width === 'full' && 'w-full',
@@ -36,7 +38,7 @@ export default function Button({
   );
 
   return (
-    <button tabIndex={tabIndex} disabled={isDisabled} className={buttonClass} onClick={onClick}>
+    <button {...buttonProps} tabIndex={tabIndex} disabled={isDisabled} className={buttonClass} onClick={onClick}>
       {children}
     </button>
   );

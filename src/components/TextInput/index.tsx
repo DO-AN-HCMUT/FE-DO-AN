@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 
 type TextInputProps = {
-  type: string;
+  type?: string;
   placeholder?: string;
   value: string;
   className?: string;

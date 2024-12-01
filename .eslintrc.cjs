@@ -140,6 +140,8 @@ module.exports = {
   plugins: [],
   root: true,
   rules: {
+    complexity: 'off',
+    '@next/next/no-img-element': 'off',
     '@typescript-eslint/no-var-requires': 'off',
     '@typescript-eslint/no-non-null-assertion': 'off',
     'arrow-parens': ['error', 'always'],
@@ -153,12 +155,6 @@ module.exports = {
     'brace-style': ['error', '1tbs'],
     camelcase: ['off'],
     'comma-dangle': ['error', 'always-multiline'],
-    complexity: [
-      'error',
-      {
-        max: 10,
-      },
-    ],
     eqeqeq: ['error', 'smart'],
     'guard-for-in': 'off',
 
