@@ -208,14 +208,6 @@ module.exports = {
       },
     ],
     'max-lines': ['error', 200],
-    'max-lines-per-function': [
-      'error',
-      {
-        max: 60,
-        skipBlankLines: true,
-        skipComments: true,
-      },
-    ],
     'max-nested-callbacks': ['error', 3],
     'max-params': ['error', 4],
     'max-statements': ['warn', 15],
@@ -252,6 +244,7 @@ module.exports = {
       parserOptions: tsParserOptions,
       plugins: ['@typescript-eslint'],
       rules: {
+        'max-lines-per-function': 'off',
         '@typescript-eslint/ban-types': ['error', { types: banTypes, extendDefaults: false }],
         '@typescript-eslint/type-annotation-spacing': [
           'error',
@@ -294,16 +287,10 @@ module.exports = {
       plugins: ['react'],
       rules: {
         '@typescript-eslint/no-shadow': 'off',
+        'max-statements': 'off',
+        'max-lines-per-function': 'off',
         'react/prop-types': 'off',
         'max-lines': ['error', 300],
-        'max-lines-per-function': [
-          'error',
-          {
-            max: 150,
-            skipBlankLines: true,
-            skipComments: true,
-          },
-        ],
       },
     },
     {

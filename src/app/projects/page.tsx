@@ -1,12 +1,14 @@
 'use client';
 import { Box, Button, Modal, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+import { useDebounceValue } from 'usehooks-ts';
 
 import Header from '@/components/Header';
 import ListItem from '@/components/ProjectsComponent/ListItem';
 import SideBar from '@/components/SideBar';
+import { Spinner } from '@/components/Spinner';
 import TextInput from '@/components/TextInput';
 import api from '@/services/api';
 
@@ -22,37 +24,31 @@ const style = {
   boxShadow: 24,
   p: 4,
 };
+
 export default function Projects() {
   const [projectList, setProjectList] = useState<any>([]);
   const [isOpenModal, setIsOpenModal] = useState(false);
   const handleOpen = () => setIsOpenModal(true);
   const handleClose = () => setIsOpenModal(false);
-  // const [input, setInput] = useState({ projectName: '' });
   const [projectName, setProjectName] = useState('');
-  const [projectCode, setProjectCode] = useState('');
+  const [debouncedProjectName, setDebouncedProjectName] = useDebounceValue('', 1000);
+  const [projectKey, setProjectKey] = useState('');
+  const [isProjectKeyLoading, setIsProjectKeyLoading] = useState(false);
   const router = useRouter();
-
-  // const code = projectName
-  //   .split(" ")
-  //   .slice(0, 3)
-  //   .map((word) => word[0])
-  //   .join("")
-  //   .toUpperCase();
 
   const handleSubmit = async () => {
     try {
       const payload = {
-        members: [],
-        taskIDs: [],
-        projectName,
-        projectCode,
+        name: projectName,
+        key: projectKey,
       };
       await api.post('/project/new', payload);
-      toast.success('Done');
+      toast.success('Project added successfully');
     } catch (error: any) {
       toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
     }
   };
+
   const getData = async () => {
     try {
       const dataList = await api.get('/user/projects');
@@ -64,13 +60,51 @@ export default function Projects() {
       }, 4000);
     }
   };
+
   const goToProject = (name: string) => {
     // window.localStorage.setItem('currentProject', name);
     router.push(`/project?id=${name}`);
   };
+
   useEffect(() => {
     getData();
   }, []);
+
+  const generateProjectKey = useCallback(async (projectName: string) => {
+    let key = projectName
+      .split(' ')
+      .slice(0, 2)
+      .map((word) => word[0])
+      .join('')
+      .toUpperCase();
+
+    while (true) {
+      try {
+        await api.post('/project/key', { key });
+        break;
+      } catch (e) {
+        console.error(e);
+        if (key.length === 2) {
+          key += 'A';
+        } else {
+          key = key.slice(0, 2) + String.fromCharCode(key.charCodeAt(2) + 1);
+        }
+      }
+    }
+
+    setProjectKey(key);
+    setIsProjectKeyLoading(false);
+  }, []);
+
+  useEffect(() => {
+    if (!debouncedProjectName) {
+      setProjectKey('');
+      setIsProjectKeyLoading(false);
+      return;
+    }
+    generateProjectKey(debouncedProjectName);
+  }, [debouncedProjectName, generateProjectKey]);
+
   return (
     <div>
       <div className='flex h-screen flex-col justify-start'>
@@ -107,29 +141,24 @@ export default function Projects() {
                 </Typography>
                 <div className='flex w-full flex-col items-stretch justify-between pt-5'>
                   <form onSubmit={handleSubmit}>
-                    <div className='flex grow flex-col justify-center'>
+                    <div className='mb-4 flex grow flex-col justify-center'>
                       <p className='mb-2 ps-1 font-semibold'>Project Name</p>
                       <TextInput
-                        className='mb-8'
                         placeholder='Enter project name'
                         value={projectName}
                         onInput={(projectName) => {
                           setProjectName(projectName);
+                          setDebouncedProjectName(projectName);
+                          setIsProjectKeyLoading(true);
                         }}
                         type='text'
                       />
                     </div>
-                    <div className='flex grow flex-col justify-center'>
-                      <p className='mb-2 ps-1 font-semibold'>Project Code</p>
-                      <TextInput
-                        className='mb-8'
-                        placeholder='Enter project code'
-                        value={projectCode}
-                        onInput={(projectCode) => {
-                          setProjectCode(projectCode);
-                        }}
-                        type='text'
-                      />
+                    <div className='mb-4 flex grow flex-col justify-center'>
+                      <p className='mb-2 ps-1 text-sm font-light'>
+                        Project Key:{' '}
+                        {isProjectKeyLoading ? <Spinner className='inline-block' /> : <span>{projectKey}</span>}
+                      </p>
                     </div>
                     <div className='flex flex-row justify-between self-end'>
                       <Button
