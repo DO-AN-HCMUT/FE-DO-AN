@@ -131,7 +131,7 @@ export default function Projects() {
               {projectList?.map((item: any, index: number) => {
                 return (
                   <div key={index}>
-                    <ListItem projectName={item.projectName} onClickFunction={() => goToProject(item._id)} />
+                    <ListItem projectName={item.name} onClickFunction={() => goToProject(item._id)} />
                   </div>
                 );
               })}

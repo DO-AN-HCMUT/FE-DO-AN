@@ -13,14 +13,16 @@ export default function ProfileLayout() {
   const [email, setEmail] = useState<string>('Email');
   const [birthday, setBirthday] = useState<string>(new Date().toString());
   const [isEdit, setIsEdit] = useState<boolean>(false);
-  const [img, setImg] = useState<any>('https://avatar.iran.liara.run/public');
+  const [img, setImg] = useState<any>('/icons/avatar.svg');
   const getProfile = async () => {
     try {
       const profile = await api.get('/user/me');
       setFullName(profile.data.payload.fullName);
       setEmail(profile.data.payload.email);
-      setBirthday(profile.data.payload.birthday);
-      if (profile.data.payload?.avatar.length > 0) {
+      if (profile.data.payload.birthday?.length > 0) {
+        setBirthday(profile.data.payload.birthday);
+      }
+      if (profile.data.payload?.avatar?.length > 0) {
         setImg(profile.data.payload.avatar);
       }
     } catch (error: any) {

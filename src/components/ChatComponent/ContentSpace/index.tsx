@@ -15,7 +15,6 @@ type ContentSpaceProps = {
 export default function ContentSpace(props: ContentSpaceProps) {
   const [data, setData] = useState<any>([]);
   const { receiver, sender, socket } = props;
-
   // const [willToast, setWillToast] = useState<boolean>(false);
   const [message, setMessage] = useState<string>('');
   socket.on('private', (name: any) => {

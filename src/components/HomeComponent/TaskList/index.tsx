@@ -1,4 +1,3 @@
-import SearchIcon from '@mui/icons-material/Search';
 import {
   Chip,
   Paper,
@@ -14,27 +13,27 @@ import {
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 
+import { TASK_STATUS_COLOR } from '@/constants/common';
 import api from '@/services/api';
+import getStatusString from '@/utils/get-status-string';
+
+import TaskStatusType, { TaskStatus } from '@/types/task-status';
 
 /* eslint-disable no-tabs */
 // eslint-disable-next-line max-params
-function createData(title: string, code: number, status: number, deadline: number, project: number) {
-  return { title, code, status, deadline, project };
+type FormatData = {
+  title: string;
+  key: string;
+  status: keyof typeof TaskStatus;
+  deadline: string;
+  projectName: string;
+};
+function createData(example: FormatData) {
+  const { title, key, status, deadline, projectName } = example;
+  return { title, key, status, deadline, projectName };
 }
 
 export default function TaskList() {
-  const chipColor = [
-    { status: 'TO_DO', color: '#e3f2fd' },
-    { status: 'IN_PROGRESS', color: '#42a5f5' },
-    { status: 'FIXING', color: '#ffa726' },
-    { status: 'FIXED', color: '#66bb6a' },
-    { status: 'TO_TEST', color: '#46b8ae' },
-    { status: 'TESTED', color: '#b8c91e' },
-    { status: 'ERROR', color: '#c9241e' },
-    { status: 'DONE', color: '#14d917' },
-    { status: 'QA', color: '#badb37' },
-    { status: 'URGENT', color: '#f02244' },
-  ];
   const [taskData, setTaskData] = useState<any>([]);
   const [searchItem, setSearchItem] = useState<string>('');
   const getTaskData = async () => {
@@ -51,7 +50,13 @@ export default function TaskList() {
   };
   const formatData = () => {
     return taskData.map((item: any) => {
-      return createData(item.title, item.code, item.status, item.endDate, item.result[0].projectName);
+      return createData({
+        title: item.title,
+        key: item.key,
+        status: item.status,
+        deadline: item.endDate ?? '',
+        projectName: item.result[0].name,
+      });
     });
   };
   useEffect(() => {
@@ -61,17 +66,18 @@ export default function TaskList() {
   return (
     <div className='p-1'>
       <div>
-        <Typography variant='h2'>TASK</Typography>
+        <Typography variant='h2'>MY TASK</Typography>
       </div>
       <div>
         <div className='flex flex-row'>
-          <SearchIcon fontSize='large' />
+          <img src='/icons/search.svg' alt='search-icon' />
           <TextField
             id='search'
             label='searching'
             value={searchItem}
             fullWidth
             onChange={(e) => setSearchItem(e.target.value)}
+            disabled={formatData().length === 0}
           />
         </div>
       </div>
@@ -98,25 +104,32 @@ export default function TaskList() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {formatData().map((row: any) => (
+              {formatData().map((row: FormatData) => (
                 <TableRow key={row.title} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                   <TableCell component='th' scope='row'>
                     {row.title}
                   </TableCell>
-                  <TableCell align='right'>{row.code}</TableCell>
+                  <TableCell align='right'>{row.key}</TableCell>
                   <TableCell align='right'>
                     <Chip
-                      label={row.status}
-                      style={{ backgroundColor: `${chipColor.filter((item) => item.status === row.status)[0].color}` }}
+                      label={getStatusString(row.status)}
+                      style={TASK_STATUS_COLOR[TaskStatus[row.status] as TaskStatusType]}
                     />
                   </TableCell>
-                  <TableCell align='right'>{new Date(row.deadline).toLocaleString()}</TableCell>
-                  <TableCell align='right'>{row.project}</TableCell>
+                  <TableCell align='right'>
+                    {row.deadline ? new Date(row.deadline).toLocaleDateString() : null}
+                  </TableCell>
+                  <TableCell align='right'>{row.projectName}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </TableContainer>
+        {formatData().length === 0 ? (
+          <div className='mt-1 h-[50px] rounded-[4px] border bg-[#FFFFFF] text-center'>No Task</div>
+        ) : (
+          <></>
+        )}
       </div>
     </div>
   );
