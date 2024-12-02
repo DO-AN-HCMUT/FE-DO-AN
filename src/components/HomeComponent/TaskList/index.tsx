@@ -1,4 +1,3 @@
-import SearchIcon from '@mui/icons-material/Search';
 import {
   Chip,
   Paper,
@@ -16,13 +15,22 @@ import toast from 'react-hot-toast';
 
 import { TASK_STATUS_COLOR } from '@/constants/common';
 import api from '@/services/api';
+import getStatusString from '@/utils/get-status-string';
 
-import TaskStatusType from '@/types/task-status';
+import TaskStatusType, { TaskStatus } from '@/types/task-status';
 
 /* eslint-disable no-tabs */
 // eslint-disable-next-line max-params
-function createData(title: string, key: number, status: number, deadline: number, project: number) {
-  return { title, key, status, deadline, project };
+type FormatData = {
+  title: string;
+  key: string;
+  status: keyof typeof TaskStatus;
+  deadline: string;
+  projectName: string;
+};
+function createData(example: FormatData) {
+  const { title, key, status, deadline, projectName } = example;
+  return { title, key, status, deadline, projectName };
 }
 
 export default function TaskList() {
@@ -42,7 +50,13 @@ export default function TaskList() {
   };
   const formatData = () => {
     return taskData.map((item: any) => {
-      return createData(item.title, item.key, item.status, item.endDate, item.result[0].name);
+      return createData({
+        title: item.title,
+        key: item.key,
+        status: item.status,
+        deadline: item.endDate,
+        projectName: item.result[0].name,
+      });
     });
   };
   useEffect(() => {
@@ -56,7 +70,7 @@ export default function TaskList() {
       </div>
       <div>
         <div className='flex flex-row'>
-          <SearchIcon fontSize='large' />
+          <img src='/icons/search.svg' alt='search-icon' />
           <TextField
             id='search'
             label='searching'
@@ -90,7 +104,7 @@ export default function TaskList() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {formatData().map((row: any) => (
+              {formatData().map((row: FormatData) => (
                 <TableRow key={row.title} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                   <TableCell component='th' scope='row'>
                     {row.title}
@@ -98,15 +112,12 @@ export default function TaskList() {
                   <TableCell align='right'>{row.key}</TableCell>
                   <TableCell align='right'>
                     <Chip
-                      label={row.status}
-                      style={{
-                        backgroundColor: `${TASK_STATUS_COLOR[row.status as TaskStatusType].backgroundColor}`,
-                        color: `${TASK_STATUS_COLOR[row.status as TaskStatusType].color}`,
-                      }}
+                      label={getStatusString(row.status)}
+                      style={TASK_STATUS_COLOR[TaskStatus[row.status] as TaskStatusType]}
                     />
                   </TableCell>
                   <TableCell align='right'>{new Date(row.deadline).toLocaleDateString()}</TableCell>
-                  <TableCell align='right'>{row.project}</TableCell>
+                  <TableCell align='right'>{row.projectName}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
