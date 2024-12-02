@@ -54,7 +54,7 @@ export default function TaskList() {
         title: item.title,
         key: item.key,
         status: item.status,
-        deadline: item.endDate,
+        deadline: item.endDate ?? '',
         projectName: item.result[0].name,
       });
     });
@@ -116,7 +116,9 @@ export default function TaskList() {
                       style={TASK_STATUS_COLOR[TaskStatus[row.status] as TaskStatusType]}
                     />
                   </TableCell>
-                  <TableCell align='right'>{new Date(row.deadline).toLocaleDateString()}</TableCell>
+                  <TableCell align='right'>
+                    {row.deadline ? new Date(row.deadline).toLocaleDateString() : null}
+                  </TableCell>
                   <TableCell align='right'>{row.projectName}</TableCell>
                 </TableRow>
               ))}
