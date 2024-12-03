@@ -99,7 +99,7 @@ export default function TaskPage() {
                     const exceedUser = task.registeredMembers.slice(3).length;
 
                     return (
-                      <tr className='h-10' key={task.key} onClick={() => handleOpen(task)}>
+                      <tr className='h-10 cursor-pointer' key={task.key} onClick={() => handleOpen(task)}>
                         <td className='border border-slate-300 px-4'>{task.key}</td>
                         <td className='border border-slate-300 px-4'>{task.title}</td>
                         <td className='border border-slate-300 px-4'>
