@@ -8,6 +8,7 @@ import Button from '@/components/Button';
 import Header from '@/components/Header';
 import SideBar from '@/components/SideBar';
 import TaskForm from '@/components/Task/TaskForm';
+import TasksModal from '@/components/TasksComponent/Modal';
 import User from '@/components/User';
 import { TASK_STATUS_COLOR } from '@/constants/common';
 import ProjectService from '@/services/project';
@@ -18,6 +19,12 @@ import { TaskStatus } from '@/types/task-status';
 
 export default function TaskPage() {
   const searchParams = useSearchParams();
+  const [isOpenModal, setIsOpenModal] = useState(false);
+  const [modalItem, setModalItem] = useState<Task>();
+  const handleOpen = (item: Task) => {
+    setIsOpenModal(true);
+    setModalItem(item);
+  };
 
   const projectId = searchParams.get('project-id')!;
 
@@ -92,7 +99,7 @@ export default function TaskPage() {
                     const exceedUser = task.registeredMembers.slice(3).length;
 
                     return (
-                      <tr className='h-10' key={task.key}>
+                      <tr className='h-10 cursor-pointer' key={task.key} onClick={() => handleOpen(task)}>
                         <td className='border border-slate-300 px-4'>{task.key}</td>
                         <td className='border border-slate-300 px-4'>{task.title}</td>
                         <td className='border border-slate-300 px-4'>
@@ -141,6 +148,7 @@ export default function TaskPage() {
             </div>
           </div>
         </div>
+        <TasksModal isOpenModal={isOpenModal} setIsOpenModal={setIsOpenModal} taskId={modalItem?._id} />
       </div>
       {/* <TaskFilterModal /> */}
     </>
