@@ -68,7 +68,7 @@ export default function MePage() {
       {/* HEADER */}
       <Header />
       {/* BODY */}
-      <div className='flex flex-grow'>
+      <div className='flex h-[1000px] flex-grow '>
         <SideBar />
         {/* CONTENT */}
         <div className='flex h-full w-11/12 items-stretch bg-[#eee] p-5'>

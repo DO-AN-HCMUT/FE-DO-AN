@@ -9,13 +9,13 @@ export default function ProjectListItem(props: ProjectProps) {
   const { data } = props;
   const router = useRouter();
   const onClickHandle = (item: any) => {
-    router.push(`/project?id=${item._id}`);
+    router.push(`/projects/tasks?project-id=${item._id}`);
   };
   return (
     <div>
       {data.length > 0 ? (
         data.map((item: any, index: number) => {
-          if (item?.projectName) {
+          if (item?.name) {
             return (
               <div
                 className='mb-2 cursor-pointer rounded border-2 border-solid  border-black hover:shadow-lg'
@@ -23,7 +23,7 @@ export default function ProjectListItem(props: ProjectProps) {
                 onClick={() => onClickHandle(item)}
               >
                 <Typography variant='h4' className='text-sky-300'>
-                  {item?.projectName}
+                  {item?.name}
                 </Typography>
               </div>
             );
