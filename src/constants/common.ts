@@ -1,15 +1,15 @@
-import TaskStatusType from '@/types/task-status';
+import TaskStatusType, { TaskStatus } from '@/types/task-status';
 
 export const TASK_STATUS_COLOR: { [key in TaskStatusType]: { backgroundColor: string; color: string } } = {
-  TO_DO: {
+  [TaskStatus.TO_DO]: {
     backgroundColor: '#F0F0F0',
     color: '#888',
   },
-  IN_PROGRESS: {
+  [TaskStatus.IN_PROGRESS]: {
     backgroundColor: '#4C9AFF',
     color: '#0747A6',
   },
-  DONE: {
+  [TaskStatus.DONE]: {
     backgroundColor: '#79F2C0',
     color: '#00875A',
   },
