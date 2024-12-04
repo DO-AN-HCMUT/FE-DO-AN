@@ -23,7 +23,6 @@ import getStatusString from '@/utils/get-status-string';
 
 import Task from '@/types/task';
 import TaskStatusType from '@/types/task-status';
-import User from '@/types/user';
 
 /* eslint-disable no-tabs */
 type ModelProps = {
@@ -80,14 +79,14 @@ export default function TasksModal(props: ModelProps) {
   }, [deadline, isEdit]);
   const handleAssign = (value: any) => {
     setIsEdit(true);
-    setAssignedMember([value]);
+    setAssignedMember(value);
   };
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     try {
       const payload = {
         endDate: deadline,
-        registeredMembers: assignedMember.map((item: User) => item._id),
+        registeredMembers: assignedMember,
         description,
         status,
       };
@@ -108,7 +107,8 @@ export default function TasksModal(props: ModelProps) {
       try {
         const result = await api.get(`/task/${taskId}/getDetail`);
         Promise.all([result, getMembers()]);
-        setAssignedMember(result.data.payload.memberDetail);
+
+        setAssignedMember(result.data.payload.memberDetail.map((item: any) => item._id));
         setDeadline(new Date(result.data.payload?.endDate as string).toString());
         setDescription(result.data.payload?.description);
         setStatus(result.data.payload.status);
@@ -142,6 +142,7 @@ export default function TasksModal(props: ModelProps) {
       }
     }
   }, [projectId]);
+
   useEffect(() => {
     getDetailTask();
   }, [getDetailTask]);
@@ -226,18 +227,23 @@ export default function TasksModal(props: ModelProps) {
                     <Select
                       labelId='member-label'
                       id='member-chip'
-                      value={assignedMember[0]?.fullName}
+                      multiple
+                      value={assignedMember}
                       onChange={(value) => handleAssign(value.target.value)}
                       renderValue={(selected) => (
                         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                           {/* <Chip key={selected._id} label={selected.fullName} /> */}
-                          <div>{selected}</div>
+                          {selected.map((item: any) => (
+                            <div key={item}>
+                              {projectMembers.filter((member: any) => member._id === item)[0]?.fullName}
+                            </div>
+                          ))}
                         </Box>
                       )}
                       MenuProps={MenuProps}
                     >
                       {projectMembers.map((name: any, index: number) => (
-                        <MenuItem key={index} value={name}>
+                        <MenuItem key={index} value={name._id}>
                           {name.fullName}
                         </MenuItem>
                       ))}
@@ -250,7 +256,6 @@ export default function TasksModal(props: ModelProps) {
                 <div className='my-2'>
                   <TextField
                     id='description'
-                    label='Description'
                     variant='outlined'
                     multiline
                     maxRows={4}

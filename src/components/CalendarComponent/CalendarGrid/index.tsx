@@ -48,7 +48,7 @@ export default function CalendarGrid() {
         return {
           id: item.code,
           text: item.title,
-          start: new Date(item.createdDate).toISOString(),
+          start: new Date(item.createdAt).toISOString(),
           end: new Date(item.endDate).toISOString(),
         };
       });
