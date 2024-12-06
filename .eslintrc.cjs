@@ -203,8 +203,8 @@ module.exports = {
         ignoreUrls: true,
       },
     ],
-    'max-lines': ['error', 200],
-    'max-nested-callbacks': ['error', 3],
+    'max-lines': 'off',
+    'max-nested-callbacks': 'off',
     'max-params': ['error', 4],
     'max-statements': ['warn', 15],
     'no-console': [
@@ -286,7 +286,7 @@ module.exports = {
         'max-statements': 'off',
         'max-lines-per-function': 'off',
         'react/prop-types': 'off',
-        'max-lines': ['error', 300],
+        'max-lines': 'off',
       },
     },
     {

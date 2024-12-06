@@ -16,7 +16,6 @@ import storage from '@/utils/storage';
 
 import Project from '@/types/project';
 import { GetMyTaskDto } from '@/types/task';
-import { TaskStatus } from '@/types/task-status';
 
 dayjs.extend(isBetween);
 
@@ -68,11 +67,11 @@ export default function MePage() {
       {/* HEADER */}
       <Header />
       {/* BODY */}
-      <div className='flex h-[1000px] flex-grow '>
+      <div className='flex flex-grow overflow-hidden'>
         <SideBar />
         {/* CONTENT */}
-        <div className='flex h-full w-11/12 items-stretch bg-[#eee] p-5'>
-          <div className='flex h-full flex-[2] flex-col pe-10'>
+        <div className='flex w-11/12 items-stretch bg-[#eee] p-5'>
+          <div className='flex flex-[2] flex-col pe-10'>
             <div className='flex flex-col rounded-2xl border-[1px] bg-white p-5'>
               <h3 className='mb-5 text-3xl font-bold text-primary'>Tasks Due Today</h3>
               {isLoading ? (
@@ -94,10 +93,10 @@ export default function MePage() {
                       <div className='flex-[3]'>{task.title}</div>
                       <div className='flex-[1]'>
                         <div
-                          style={TASK_STATUS_COLOR[TaskStatus[task.status]]}
+                          style={TASK_STATUS_COLOR[task.status]}
                           className='inline rounded-3xl border-[1px] border-[#ccc] px-3 py-1'
                         >
-                          {TaskStatus[task.status]}
+                          {task.status}
                         </div>
                       </div>
                       <div className='flex-[2]'>{dayjs(task.endDate).format('DD/MM/YYYY')}</div>
@@ -116,7 +115,7 @@ export default function MePage() {
                 </div>
               )}
             </div>
-            <div className='mt-2 flex flex-col rounded-2xl border-[1px] bg-white p-5'>
+            <div className='mt-2 flex flex-col overflow-hidden rounded-2xl border-[1px] bg-white p-5'>
               <h3 className='mb-5 text-3xl font-bold text-primary'>My Projects</h3>
               {isLoading ? (
                 <div className='flex flex-grow flex-col items-center justify-center'>
@@ -171,10 +170,10 @@ export default function MePage() {
                       <div className='mb-2'>
                         Status:{' '}
                         <div
-                          style={TASK_STATUS_COLOR[TaskStatus[task.status]]}
+                          style={TASK_STATUS_COLOR[task.status]}
                           className='inline rounded-3xl border-[1px] border-[#ccc] px-3 py-1'
                         >
-                          {TaskStatus[task.status]}
+                          {task.status}
                         </div>
                       </div>
                       <div>Deadline: {dayjs(task.endDate).format('DD/MM/YYYY')}</div>

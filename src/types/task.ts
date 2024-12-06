@@ -1,5 +1,5 @@
 import Project from './project';
-import { TaskStatus } from './task-status';
+import TaskStatusType from './task-status';
 import User from './user';
 
 type Task = {
@@ -9,7 +9,7 @@ type Task = {
   key: string;
   registeredMembers: User[];
   description?: string;
-  status: keyof typeof TaskStatus;
+  status: TaskStatusType;
   endDate?: string;
   createdAt?: string;
 };
@@ -17,7 +17,7 @@ type Task = {
 export type CreateTaskRequestDto = {
   title: string;
   registeredMembers?: string[];
-  status?: keyof typeof TaskStatus;
+  status?: TaskStatusType;
   endDate?: string;
 };
 
