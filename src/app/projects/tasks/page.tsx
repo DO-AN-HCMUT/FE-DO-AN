@@ -176,7 +176,7 @@ export default function TaskPage() {
                                   <User
                                     key={user._id}
                                     name={user.fullName}
-                                    avatar={user.avatar ?? '/icons/avatar.svg'}
+                                    avatar={user.avatar}
                                     isDisplayName={task.registeredMembers.length < 2}
                                   />
                                 ))}

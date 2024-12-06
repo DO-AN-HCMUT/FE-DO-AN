@@ -1,6 +1,7 @@
 'use client';
 
 import { Modal, Box, Typography, Button as MuiButton } from '@mui/material';
+import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -77,8 +78,13 @@ export default function MemberPage() {
         <div className='flex flex-grow overflow-hidden'>
           <SideBar />
           <div className='flex flex-grow flex-col items-start p-10'>
-            <h1 className='mb-2 text-lg'>Projects / {projectName}</h1>
-            <h2 className='mb-5 text-3xl font-bold'>Members</h2>
+            <h1 className='mb-2 text-lg'>
+              <Link className='hover:underline' href='/projects'>
+                Projects
+              </Link>{' '}
+              / {projectName}
+            </h1>
+            <h2 className='mb-5 text-3xl font-bold text-primary'>Members</h2>
             <Button
               className='mb-5'
               onClick={() => {
@@ -117,8 +123,8 @@ export default function MemberPage() {
                 <thead>
                   <tr className='h-12 rounded-lg bg-[#e4f8fa]'>
                     <th className='w-[10%] ps-4 text-left'>No.</th>
-                    <th className='w-[45%] ps-4 text-left'>Name</th>
-                    <th className='w-[15%] ps-4 text-left'>Email</th>
+                    <th className='w-[35%] ps-4 text-left'>Name</th>
+                    <th className='w-[25%] ps-4 text-left'>Email</th>
                     <th className='w-[15%] ps-4'>Role</th>
                     <th className='w-[15%] ps-4'>Actions</th>
                   </tr>
@@ -138,7 +144,9 @@ export default function MemberPage() {
                         key={member._id}
                       >
                         <td className='px-4'>{index + 1}</td>
-                        <td className='px-4'>{member.fullName}</td>
+                        <td className='px-4'>
+                          <User name={member.fullName} avatar={member.avatar} />
+                        </td>
                         <td className='px-4'>{member.email}</td>
                         <td className='px-4 text-center'>{member.isLeader ? 'Leader' : 'Member'}</td>
                         <td className='space-x-2 px-4 text-center'>
