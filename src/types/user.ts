@@ -2,7 +2,7 @@ type User = {
   _id: string;
   fullName: string;
   email: string;
-  sex: string;
+  avatar: string;
   birthday: string;
 };
 

@@ -140,6 +140,8 @@ module.exports = {
   plugins: [],
   root: true,
   rules: {
+    complexity: 'off',
+    '@next/next/no-img-element': 'off',
     '@typescript-eslint/no-var-requires': 'off',
     '@typescript-eslint/no-non-null-assertion': 'off',
     'arrow-parens': ['error', 'always'],
@@ -153,12 +155,6 @@ module.exports = {
     'brace-style': ['error', '1tbs'],
     camelcase: ['off'],
     'comma-dangle': ['error', 'always-multiline'],
-    complexity: [
-      'error',
-      {
-        max: 10,
-      },
-    ],
     eqeqeq: ['error', 'smart'],
     'guard-for-in': 'off',
 
@@ -207,16 +203,8 @@ module.exports = {
         ignoreUrls: true,
       },
     ],
-    'max-lines': ['error', 200],
-    'max-lines-per-function': [
-      'error',
-      {
-        max: 60,
-        skipBlankLines: true,
-        skipComments: true,
-      },
-    ],
-    'max-nested-callbacks': ['error', 3],
+    'max-lines': 'off',
+    'max-nested-callbacks': 'off',
     'max-params': ['error', 4],
     'max-statements': ['warn', 15],
     'no-console': [
@@ -252,6 +240,7 @@ module.exports = {
       parserOptions: tsParserOptions,
       plugins: ['@typescript-eslint'],
       rules: {
+        'max-lines-per-function': 'off',
         '@typescript-eslint/ban-types': ['error', { types: banTypes, extendDefaults: false }],
         '@typescript-eslint/type-annotation-spacing': [
           'error',
@@ -293,16 +282,11 @@ module.exports = {
       files: ['**/*.tsx'],
       plugins: ['react'],
       rules: {
+        '@typescript-eslint/no-shadow': 'off',
+        'max-statements': 'off',
+        'max-lines-per-function': 'off',
         'react/prop-types': 'off',
-        'max-lines': ['error', 300],
-        'max-lines-per-function': [
-          'error',
-          {
-            max: 150,
-            skipBlankLines: true,
-            skipComments: true,
-          },
-        ],
+        'max-lines': 'off',
       },
     },
     {

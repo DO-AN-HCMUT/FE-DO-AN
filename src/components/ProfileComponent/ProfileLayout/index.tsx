@@ -7,30 +7,38 @@ import api from '@/services/api';
 
 import InputList from '../InputList';
 import ProjectList from '../ProjectList';
-
 /* eslint-disable no-tabs */
 export default function ProfileLayout() {
   const [fullName, setFullName] = useState<string>('fullName');
   const [email, setEmail] = useState<string>('Email');
   const [birthday, setBirthday] = useState<string>(new Date().toString());
   const [isEdit, setIsEdit] = useState<boolean>(false);
-  const [img, setImg] = useState<any>('https://avatar.iran.liara.run/public');
+  const [img, setImg] = useState<any>('/icons/avatar.svg');
   const getProfile = async () => {
     try {
       const profile = await api.get('/user/me');
       setFullName(profile.data.payload.fullName);
       setEmail(profile.data.payload.email);
-      setBirthday(profile.data.payload.birthday);
-      if (profile.data.payload?.avatar.length > 0) {
+      if (profile.data.payload.birthday?.length > 0) {
+        setBirthday(profile.data.payload.birthday);
+      }
+      if (profile.data.payload?.avatar?.length > 0) {
         setImg(profile.data.payload.avatar);
       }
     } catch (error: any) {
-      toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
+      if (error?.response?.data.message === 'TokenExpiredError') {
+        toast.error('Please log in', { position: 'bottom-center' });
+        setTimeout(() => {
+          window.location.href = '/auth/sign-in';
+        }, 4000);
+      } else {
+        toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
+      }
       // console.log(error);
     }
   };
 
-  const inputFile = useRef(null);
+  const inputFile = useRef<HTMLInputElement>(null);
   const uploadImg = async () => {
     if (typeof img !== 'string') {
       try {
@@ -38,8 +46,11 @@ export default function ProfileLayout() {
         formData.append('file', img);
         await api.post('/user/uploadImg', formData);
       } catch (error: any) {
-        toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
-        // console.log(error);
+        if (error?.response?.data.message === 'TokenExpiredError') {
+          toast.error('Please log in', { position: 'bottom-center' });
+        } else {
+          toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
+        } // console.log(error);
       }
     }
   };
@@ -52,14 +63,20 @@ export default function ProfileLayout() {
       };
       await api.put('/user/update', userData);
     } catch (error: any) {
-      toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
-      // console.log(error);
+      if (error?.response?.data.message === 'TokenExpiredError') {
+        toast.error('Please log in', { position: 'bottom-center' });
+      } else {
+        toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
+      } // console.log(error);
     }
   };
   const handleSave = () => {
-    uploadImg();
-    updateProfile();
     setIsEdit(false);
+    toast.promise(Promise.all([uploadImg(), updateProfile()]), {
+      loading: 'Loading...',
+      success: <b>Settings saved!</b>,
+      error: <b>Could not save.</b>,
+    });
   };
   const handleChange = (e: any) => {
     const imgLink = e.target.files[0];
@@ -83,10 +100,10 @@ export default function ProfileLayout() {
             <Image
               src={typeof img == 'string' ? img : URL.createObjectURL(img)}
               alt='avatar'
-              width={500}
-              height={200}
+              width={300}
+              height={150}
               style={{ height: '150px' }}
-              className='max-w-full rounded-full border-2 border-solid'
+              className='rounded-lg border-2 border-solid'
             />
           </div>
 
@@ -108,7 +125,7 @@ export default function ProfileLayout() {
         </div>
       </div>
       <ProjectList />
-      <div className='mt-2 w-full'>
+      <div className='mt-2 w-full '>
         <Button variant='contained' color='success' disabled={!isEdit} className='w-full' onClick={() => handleSave()}>
           Save
         </Button>

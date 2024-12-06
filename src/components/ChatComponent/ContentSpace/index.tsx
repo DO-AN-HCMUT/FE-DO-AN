@@ -3,18 +3,21 @@ import { Avatar, Button, TextField } from '@mui/material';
 import { useEffect, useState } from 'react';
 // eslint-disable-next-line import/no-unresolved
 import toast from 'react-hot-toast';
-import { io } from 'socket.io-client';
 
 import api from '@/services/api';
 
 /* eslint-disable no-tabs */
-export default function ContentSpace(props: any) {
+type ContentSpaceProps = {
+  socket: any;
+  receiver: any;
+  sender: any;
+};
+export default function ContentSpace(props: ContentSpaceProps) {
   const [data, setData] = useState<any>([]);
-  const { receiver, sender } = props;
+  const { receiver, sender, socket } = props;
   // const [willToast, setWillToast] = useState<boolean>(false);
   const [message, setMessage] = useState<string>('');
-  const socket = io(process.env.NEXT_PUBLIC_CHAT_URL as string);
-  socket.on('broad', (name) => {
+  socket.on('private', (name: any) => {
     // setReceive([...receive, name]);
     setData([...data, name]);
   });
@@ -28,10 +31,14 @@ export default function ContentSpace(props: any) {
       }
     } catch (error: any) {
       // console.log(error);
-      toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
-      // window.location.href = '/auth/sign-in';
+      if (error?.response?.data.message === 'TokenExpiredError') {
+        toast.error('Please log in', { position: 'bottom-center' });
+      } else {
+        toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
+      } // window.location.href = '/auth/sign-in';
     }
   };
+
   const setNewMessage = async (newContent: any) => {
     try {
       await api.put('/chat/addMess', {
@@ -40,46 +47,53 @@ export default function ContentSpace(props: any) {
         message: newContent,
       });
     } catch (error: any) {
-      toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
-      // console.log(error);
+      if (error?.response?.data.message === 'TokenExpiredError') {
+        toast.error('Please log in', { position: 'bottom-center' });
+      } else {
+        toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
+      } // console.log(error);
     }
   };
   const handleClick = () => {
     setNewMessage({ userID: sender, content: message });
-
-    socket.emit('message', { userID: sender, content: message });
+    // if (currentUser.filter((item: any) => item.socketName === receiver).length > 0) {
+    //   socket.emit('message', { socketID: sender, content: message });
+    // }
     setMessage('');
   };
   useEffect(() => {
     getData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props]);
+
   return (
     <div className='h-full'>
-      <div className='h-5/6 overflow-auto bg-violet-800'>
-        {data?.length > 0 ? (
-          data.map((item: any, index: number) => (
-            <div key={index}>
-              {item.userID === receiver ? (
-                <div className=' flex flex-row  '>
-                  <Avatar>target</Avatar>
-                  <div className=' mx-1 w-5/12 overflow-auto  rounded-lg border-2 border-solid border-gray-200 bg-gray-500 p-2 text-slate-50'>
-                    {item.content}
+      <div className='flex h-5/6 flex-col-reverse overflow-auto bg-violet-800'>
+        <div>
+          {data?.length > 0 ? (
+            data.map((item: any, index: number) => (
+              <div key={index}>
+                {item.userID === receiver ? (
+                  <div className=' flex flex-row  '>
+                    <Avatar>target</Avatar>
+                    <div className=' mx-1 w-5/12 overflow-auto  rounded-lg border-2 border-solid border-gray-200 bg-gray-500 p-2 text-slate-50'>
+                      {item.content}
+                    </div>
                   </div>
-                </div>
-              ) : (
-                <div className='flex flex-row-reverse  '>
-                  <Avatar>me</Avatar>
-                  <div className=' mx-1 w-5/12 overflow-auto  rounded-lg border-2 border-solid border-gray-200 bg-teal-200 p-2'>
-                    {item.content}
+                ) : (
+                  <div className='flex flex-row-reverse  '>
+                    <Avatar>me</Avatar>
+                    <div className=' mx-1 w-5/12 overflow-auto  rounded-lg border-2 border-solid border-gray-200 bg-teal-200 p-2'>
+                      {item.content}
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
-          ))
-        ) : (
-          <></>
-        )}
+                )}
+              </div>
+            ))
+          ) : (
+            <></>
+          )}
+        </div>
       </div>
       {receiver.length > 0 ? (
         <div className=' flex flex-row justify-between px-0 pt-3 '>

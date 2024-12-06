@@ -11,7 +11,7 @@ import TextInput from '@/components/TextInput';
 import AuthContext from '@/contexts/auth';
 
 export default function SignUp() {
-  const [input, setInput] = useState({ email: '', password: '', confirmPassword: '' });
+  const [input, setInput] = useState({ displayName: '', email: '', password: '', confirmPassword: '' });
   // const [errorText, setErrorText] = useState('');
 
   const router = useRouter();
@@ -30,7 +30,7 @@ export default function SignUp() {
         return;
       }
       try {
-        await signUp(input);
+        await signUp({ ...input, fullName: input.displayName });
         toast.success('Success');
         setTimeout(() => {
           router.push('/');
@@ -52,6 +52,13 @@ export default function SignUp() {
       <div className='flex w-3/5 flex-col items-stretch justify-between'>
         <form onSubmit={handleSignUp}>
           <div className='flex grow flex-col justify-center'>
+            <TextInput
+              className='mb-8'
+              placeholder='Display Name'
+              value={input.displayName}
+              onInput={(displayName) => setInput({ ...input, displayName })}
+              type='text'
+            />
             <TextInput
               className='mb-8'
               placeholder='Email'

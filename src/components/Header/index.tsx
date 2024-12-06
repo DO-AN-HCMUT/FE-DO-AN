@@ -1,3 +1,5 @@
+'use client';
+
 // import { Box, Button, Modal, Typography } from '@mui/material';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -18,14 +20,23 @@ import AuthContext from '@/contexts/auth';
 //   boxShadow: 24,
 //   p: 4,
 // };
-
-export default function Header() {
+type HeaderProps = {
+  socket?: any;
+};
+export default function Header(props: HeaderProps) {
   // const [isOpenModal, setIsOpenModal] = useState(false);
   // const handleOpen = () => setIsOpenModal(true);
   // const handleClose = () => setIsOpenModal(false);
   // const [input, setInput] = useState({ projectName: '', description: '' });
-  const { signOut } = useContext(AuthContext);
+  const { socket } = props;
 
+  const { signOut } = useContext(AuthContext);
+  const handleSignOut = () => {
+    if (socket) {
+      socket.disconnect();
+    }
+    signOut();
+  };
   return (
     <div className='flex w-full items-center justify-between bg-[#3c3c3c] p-4'>
       <Image src='/images/logo.png' alt='logo' width={40} height={40} className='' />
@@ -68,8 +79,8 @@ export default function Header() {
           </Box>
         </Modal> */}
         <Image src='/images/header/bell.png' alt='notification' width={40} height={40} className='me-4' />
-        <Link href='/profile'>
-          <Image src='/images/header/avatar.jpeg' alt='profile' width={40} height={40} className='me-4 rounded-full' />
+        <Link href='/profile' className='mr-1 w-[40px] rounded-full hover:bg-sky-500'>
+          <Image src='/images/header/account.svg' alt='profile' width={40} height={40} className='me-4 rounded-full' />
         </Link>
         <Image
           src='/icons/logout.svg'
@@ -77,7 +88,7 @@ export default function Header() {
           width={40}
           height={40}
           className='hover:cursor-pointer'
-          onClick={() => signOut()}
+          onClick={() => handleSignOut()}
         />
       </div>
     </div>

@@ -22,8 +22,11 @@ export default function ProjectList() {
         setProjectData(result.data.payload);
       }
     } catch (error: any) {
-      toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
-      //console.log(error);
+      if (error?.response?.data.message === 'TokenExpiredError') {
+        toast.error('Please log in', { position: 'bottom-center' });
+      } else {
+        toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
+      } //console.log(error);
     }
   };
   useEffect(() => {
