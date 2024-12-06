@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import dayjs from 'dayjs';
-import { useEffect, useState } from 'react';
+import { forwardRef, useEffect, useState } from 'react';
 
 import Button from '@/components/Button';
 import User from '@/components/User';
@@ -14,9 +14,10 @@ import UserType from '@/types/user';
 type TaskFormProps = {
   projectId: string;
   onAddTaskSuccess: () => void;
+  onBlur: () => void;
 };
 
-export default function TaskForm({ projectId, onAddTaskSuccess }: TaskFormProps) {
+const TaskForm = forwardRef<HTMLTableRowElement, TaskFormProps>(({ projectId, onAddTaskSuccess, onBlur }, ref) => {
   const [isAdding, setIsAdding] = useState(false);
   const [title, setTitle] = useState('');
   const [assignees, setAssignees] = useState<UserType[]>([]);
@@ -52,10 +53,13 @@ export default function TaskForm({ projectId, onAddTaskSuccess }: TaskFormProps)
   };
 
   return (
-    <tr className='relative h-10'>
+    <tr ref={ref} className='relative h-10'>
       <td className='cursor-not-allowed border border-slate-300 bg-gray-100 px-4'></td>
       <td className='border border-slate-300'>
         <input
+          onBlur={() => {
+            if (!isAdding) onBlur();
+          }}
           type='text'
           className='size-full h-10 px-4 outline-none'
           placeholder='Add new task'
@@ -204,4 +208,8 @@ export default function TaskForm({ projectId, onAddTaskSuccess }: TaskFormProps)
       )}
     </tr>
   );
-}
+});
+
+TaskForm.displayName = 'TaskForm';
+
+export default TaskForm;
