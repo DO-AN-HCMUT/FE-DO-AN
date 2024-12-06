@@ -3,6 +3,7 @@
 import dayjs from 'dayjs';
 import { useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState, useRef } from 'react';
+import toast from 'react-hot-toast';
 
 import Button from '@/components/Button';
 import Header from '@/components/Header';
@@ -11,6 +12,7 @@ import TaskForm from '@/components/Task/TaskForm';
 import TasksModal from '@/components/TasksComponent/Modal';
 import User from '@/components/User';
 import { TASK_STATUS_COLOR } from '@/constants/common';
+import api from '@/services/api';
 import ProjectService from '@/services/project';
 import getStatusString from '@/utils/get-status-string';
 
@@ -27,7 +29,18 @@ export default function TaskPage() {
     setIsOpenModal(true);
     setModalItem(item);
   };
-
+  const handleDelete = async () => {
+    try {
+      await api.delete(`/project/${projectId}/deleteProject`);
+      window.location.href = '/projects';
+    } catch (error: any) {
+      if (error?.response?.data.message === 'TokenExpiredError') {
+        toast.error('Please log in', { position: 'bottom-center' });
+      } else {
+        toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
+      }
+    }
+  };
   const taskFormRef = useRef<HTMLTableRowElement>(null);
   const searchParams = useSearchParams();
   const projectId = searchParams.get('project-id')!;
@@ -61,14 +74,24 @@ export default function TaskPage() {
           <div className='flex flex-grow flex-col items-start p-10'>
             <h1 className='mb-2 text-lg'>Projects / {projectName}</h1>
             <h2 className='mb-5 text-3xl font-bold'>Tasks</h2>
-            <Button
-              className='mb-5'
-              onClick={() => {
-                setIsAdding(true);
-              }}
-            >
-              + New task
-            </Button>
+            <div className='flex w-full flex-row items-center justify-between'>
+              <Button
+                className='mb-5'
+                onClick={() => {
+                  setIsAdding(true);
+                }}
+              >
+                + New task
+              </Button>
+              <Button
+                className='mb-5 bg-red'
+                onClick={() => {
+                  handleDelete();
+                }}
+              >
+                Delete This Project
+              </Button>
+            </div>
 
             {/* UTILITY BUTTONS */}
             <div className='mb-4 flex w-full items-center space-x-2'>

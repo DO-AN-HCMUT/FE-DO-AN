@@ -39,7 +39,7 @@ export default function Projects() {
   const handleSubmit = async () => {
     try {
       const payload = {
-        name: projectName,
+        name: projectName.trim(),
         key: projectKey,
       };
       await api.post('/project/new', payload);
@@ -174,7 +174,11 @@ export default function Projects() {
                       >
                         Cancel
                       </Button>
-                      <Button className='bg-primary text-white hover:bg-primary-dark' type='submit'>
+                      <Button
+                        className='bg-primary text-white hover:bg-primary-dark'
+                        type='submit'
+                        disabled={!projectName.trim()}
+                      >
                         Submit
                       </Button>
                     </div>
