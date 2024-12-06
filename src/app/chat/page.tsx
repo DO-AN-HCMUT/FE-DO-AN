@@ -74,8 +74,6 @@ export default function Chat() {
   }, [isDelete]);
   useEffect(() => {
     const handleWindowClose = (e: any) => {
-      console.log('window clos');
-
       e.preventDefault();
       socket.disconnect();
     };
@@ -97,7 +95,7 @@ export default function Chat() {
             <AddChatItem receiver={conservation?.receiver} sender={conservation?.sender} />
           </div>
           <div className='flex h-full flex-row justify-between gap-1 pl-2 lg:gap-0'>
-            <div className=' max-h-screen w-6/12 overflow-y-scroll bg-red'>
+            <div className=' max-h-screen w-6/12 overflow-y-scroll rounded-lg bg-red'>
               {conservation?.receiver?.map((item: string, index: number) => (
                 <ChatItem
                   id={item}
@@ -118,7 +116,7 @@ export default function Chat() {
                   <ContentSpace receiver={selectedValue} sender={conservation?.sender} socket={socket} />
                 </Suspense>
               ) : (
-                <div className='h-full overflow-auto bg-violet-800' />
+                <div className='h-full overflow-auto rounded-sm bg-violet-800' />
               )}
             </div>
           </div>

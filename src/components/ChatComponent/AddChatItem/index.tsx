@@ -41,7 +41,7 @@ export default function AddChatItem(props: any) {
   const handleClick = async () => {
     try {
       await api.post('/chat/create', {
-        userIDs: [sender, willReceive],
+        userIds: [sender, willReceive],
         message: [],
       });
       setIsOpen(false);
@@ -79,7 +79,7 @@ export default function AddChatItem(props: any) {
                 {friend.map((item: any, index: number) => {
                   return (
                     <MenuItem value={item.id} key={index}>
-                      {item.fullName ? item.fullName : 'User'}
+                      {item.fullName ?? 'User'}
                     </MenuItem>
                   );
                 })}
