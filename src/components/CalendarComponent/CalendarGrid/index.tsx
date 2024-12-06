@@ -3,27 +3,16 @@
 'use client';
 
 import { DayPilot, DayPilotMonth } from '@daypilot/daypilot-lite-react';
+import dayjs from 'dayjs';
+import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 
 import api from '@/services/api';
-// import { start } from 'repl';
-// import { text } from 'stream/consumers';
-
-// const colors = [
-//   { name: 'Green', id: '#6aa84f' },
-//   { name: 'Blue', id: '#3d85c6' },
-//   { name: 'Turquoise', id: '#00aba9' },
-//   { name: 'Light Blue', id: '#56c5ff' },
-//   { name: 'Yellow', id: '#f1c232' },
-//   { name: 'Orange', id: '#e69138' },
-//   { name: 'Red', id: '#cc4125' },
-//   { name: 'Light Red', id: '#ff0000' },
-//   { name: 'Purple', id: '#af8ee5' },
-// ];
 
 export default function CalendarGrid() {
   const [calendar, setCalendar] = useState<DayPilot.Calendar>();
+  const [offset, setOffset] = useState(0);
 
   const initialConfig: any = {
     eventHeight: 30,
@@ -37,7 +26,6 @@ export default function CalendarGrid() {
     },
   };
   const [events, setEvents] = useState<any>([]);
-  // const [config] = useState(initialConfig);
   const getTask = async () => {
     try {
       const result = await api.get('/task/getAll');
@@ -54,8 +42,6 @@ export default function CalendarGrid() {
       });
 
       setEvents(tasksEvent);
-
-      // calendar.update({ startDate, events });
     } catch (error: any) {
       if (error?.response?.data.message === 'TokenExpiredError') {
         toast.error('Please log in', { position: 'bottom-center' });
@@ -69,6 +55,8 @@ export default function CalendarGrid() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [calendar]);
 
+  const showingDay = dayjs().add(offset, 'month');
+
   return (
     <div>
       {/* <DayPilotCalendar
@@ -81,7 +69,21 @@ export default function CalendarGrid() {
         onBeforeEventRender={onBeforeEventRender}
         controlRef={setCalendar}
       /> */}
-      <DayPilotMonth startDate={new Date().toISOString()} events={events} {...initialConfig} controlRef={setCalendar} />
+      <div>
+        <div className='mb-3 flex items-stretch space-x-3'>
+          <div className='w-[200px] self-center ps-2 text-2xl font-bold'>{showingDay.format('MMMM YYYY')}</div>
+          <button className='rounded-sm bg-gray-100 p-0' onClick={() => setOffset((prev) => prev - 1)}>
+            <Image src='/icons/chevron-left.svg' alt='chevron' width={32} height={32} className='' />
+          </button>
+          <button className='bg-gray-100 p-2' onClick={() => setOffset(0)}>
+            Today
+          </button>
+          <button className='rounded-sm bg-gray-100 p-0' onClick={() => setOffset((prev) => prev + 1)}>
+            <Image src='/icons/chevron-right.svg' alt='chevron' width={32} height={32} className='' />
+          </button>
+        </div>
+      </div>
+      <DayPilotMonth startDate={showingDay.toISOString()} events={events} {...initialConfig} controlRef={setCalendar} />
     </div>
   );
 }

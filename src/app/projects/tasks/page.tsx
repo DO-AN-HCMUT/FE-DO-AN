@@ -1,6 +1,8 @@
 'use client';
 
 import dayjs from 'dayjs';
+import Image from 'next/image';
+import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState, useRef } from 'react';
 import toast from 'react-hot-toast';
@@ -65,15 +67,20 @@ export default function TaskPage() {
 
   return (
     <>
-      <div className='flex h-screen flex-col'>
+      <div className='flex h-screen w-full flex-col'>
         {/* HEADER */}
         <Header />
         {/* BODY */}
         <div className='flex flex-grow overflow-hidden'>
           <SideBar />
           <div className='flex flex-grow flex-col items-start p-10'>
-            <h1 className='mb-2 text-lg'>Projects / {projectName}</h1>
-            <h2 className='mb-5 text-3xl font-bold'>Tasks</h2>
+            <h1 className='mb-2 text-lg'>
+              <Link className='hover:underline' href='/projects'>
+                Projects
+              </Link>{' '}
+              / {projectName}
+            </h1>
+            <h2 className='mb-5 text-3xl font-bold text-primary'>Tasks</h2>
             <div className='flex w-full flex-row items-center justify-between'>
               <Button
                 className='mb-5'
@@ -117,84 +124,91 @@ export default function TaskPage() {
             </div>
 
             {/* TASKS */}
-            <div className='overflow-auto pb-5'>
-              <table className='w-full table-fixed border-collapse'>
-                <thead>
-                  <tr className='h-12 rounded-lg bg-[#e4f8fa]'>
-                    <th className='w-[10%] ps-4 text-left'>Key</th>
-                    <th className='w-[45%] ps-4 text-left'>Title</th>
-                    <th className='w-[15%] ps-4 text-left'>Assignee</th>
-                    <th className='w-[15%] ps-4'>Status</th>
-                    <th className='w-[15%] ps-4 text-left'>Deadline</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {isAdding && (
-                    <TaskForm
-                      ref={taskFormRef}
-                      key={tasks.length}
-                      projectId={projectId}
-                      onBlur={() => {
-                        setIsAdding(false);
-                      }}
-                      onAddTaskSuccess={() => {
-                        fetchTasks();
-                        setIsAdding(false);
-                      }}
-                    />
-                  )}
-                  {tasks
-                    .filter((task) => {
-                      const lowerCaseSearch = search.toLowerCase();
-                      return (
-                        task.title.toLowerCase().includes(lowerCaseSearch) ||
-                        task.key.toLowerCase().includes(lowerCaseSearch)
-                      );
-                    })
-                    .map((task) => {
-                      const exceedUser = task.registeredMembers.slice(3).length;
+            <div className='self-center overflow-auto pb-5'>
+              {tasks.length > 0 || isAdding ? (
+                <table className='w-full table-fixed border-collapse'>
+                  <thead>
+                    <tr className='h-12 rounded-lg bg-[#e4f8fa]'>
+                      <th className='w-[10%] ps-4 text-left'>Key</th>
+                      <th className='w-[45%] ps-4 text-left'>Title</th>
+                      <th className='w-[15%] ps-4 text-left'>Assignee</th>
+                      <th className='w-[15%] ps-4'>Status</th>
+                      <th className='w-[15%] ps-4 text-left'>Deadline</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {isAdding && (
+                      <TaskForm
+                        ref={taskFormRef}
+                        key={tasks.length}
+                        projectId={projectId}
+                        onBlur={() => {
+                          setIsAdding(false);
+                        }}
+                        onAddTaskSuccess={() => {
+                          fetchTasks();
+                          setIsAdding(false);
+                        }}
+                      />
+                    )}
+                    {tasks
+                      .filter((task) => {
+                        const lowerCaseSearch = search.toLowerCase();
+                        return (
+                          task.title.toLowerCase().includes(lowerCaseSearch) ||
+                          task.key.toLowerCase().includes(lowerCaseSearch)
+                        );
+                      })
+                      .map((task) => {
+                        const exceedUser = task.registeredMembers.slice(3).length;
 
-                      return (
-                        <tr
-                          className='h-12 cursor-pointer border-b transition-all duration-100 hover:bg-[#0b363b10]'
-                          key={task.key}
-                          onClick={() => handleOpen(task)}
-                        >
-                          <td className='px-4'>{task.key}</td>
-                          <td className='px-4'>{task.title}</td>
-                          <td className='px-4'>
-                            <div className='flex space-x-1'>
-                              {task.registeredMembers.slice(0, 3).map((user) => (
-                                <User
-                                  key={user._id}
-                                  name={user.fullName}
-                                  avatar={user.avatar ?? '/icons/avatar.svg'}
-                                  isDisplayName={task.registeredMembers.length < 2}
-                                />
-                              ))}
-                              {exceedUser > 0 && (
-                                <span className='inline rounded-full bg-gray-300 px-2 py-1 text-black'>
-                                  +{exceedUser}
-                                </span>
-                              )}
-                            </div>
-                          </td>
-                          <td className='px-4 text-center'>
-                            {task.status && (
-                              <div
-                                style={TASK_STATUS_COLOR[task.status]}
-                                className='inline rounded bg-green px-2 py-1 font-semibold text-white'
-                              >
-                                {getStatusString(task.status)}
+                        return (
+                          <tr
+                            className='h-12 cursor-pointer border-b transition-all duration-100 hover:bg-[#0b363b10]'
+                            key={task.key}
+                            onClick={() => handleOpen(task)}
+                          >
+                            <td className='px-4'>{task.key}</td>
+                            <td className='px-4'>{task.title}</td>
+                            <td className='px-4'>
+                              <div className='flex space-x-1'>
+                                {task.registeredMembers.slice(0, 3).map((user) => (
+                                  <User
+                                    key={user._id}
+                                    name={user.fullName}
+                                    avatar={user.avatar ?? '/icons/avatar.svg'}
+                                    isDisplayName={task.registeredMembers.length < 2}
+                                  />
+                                ))}
+                                {exceedUser > 0 && (
+                                  <span className='inline rounded-full bg-gray-300 px-2 py-1 text-black'>
+                                    +{exceedUser}
+                                  </span>
+                                )}
                               </div>
-                            )}
-                          </td>
-                          <td className='px-4'>{task.endDate ? dayjs(task.endDate).format('DD/MM/YYYY') : ''}</td>
-                        </tr>
-                      );
-                    })}
-                </tbody>
-              </table>
+                            </td>
+                            <td className='px-4 text-center'>
+                              {task.status && (
+                                <div
+                                  style={TASK_STATUS_COLOR[task.status]}
+                                  className='inline rounded bg-green px-2 py-1 font-semibold text-white'
+                                >
+                                  {getStatusString(task.status)}
+                                </div>
+                              )}
+                            </td>
+                            <td className='px-4'>{task.endDate ? dayjs(task.endDate).format('DD/MM/YYYY') : ''}</td>
+                          </tr>
+                        );
+                      })}
+                  </tbody>
+                </table>
+              ) : (
+                <div className='mt-20 flex w-full flex-col items-center'>
+                  <Image src='/images/no-task.png' alt='no-task' width={200} height={200} className='mb-3' />
+                  <p className='text-lg'>There are no task in this project. Add task now!</p>
+                </div>
+              )}
             </div>
           </div>
         </div>

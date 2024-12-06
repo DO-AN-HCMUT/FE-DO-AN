@@ -23,6 +23,7 @@ import getStatusString from '@/utils/get-status-string';
 
 import Task from '@/types/task';
 import TaskStatusType from '@/types/task-status';
+import User from '@/types/user';
 
 /* eslint-disable no-tabs */
 type ModelProps = {
@@ -61,7 +62,7 @@ export default function TasksModal(props: ModelProps) {
   const [assignedMember, setAssignedMember] = useState<any>([]);
   const [tasks, setTasks] = useState<Task>();
   const [description, setDescription] = useState('');
-  const [projectMembers, setProjectMembers] = useState([]);
+  const [projectMembers, setProjectMembers] = useState<User[]>([]);
   const [status, setStatus] = useState<TaskStatusType>();
   const handleClose = () => {
     setIsEdit(false);

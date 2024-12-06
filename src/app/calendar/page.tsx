@@ -1,7 +1,5 @@
 'use client';
 
-import { Typography } from '@mui/material';
-
 import CalendarGrid from '@/components/CalendarComponent/CalendarGrid';
 import Header from '@/components/Header';
 import SideBar from '@/components/SideBar';
@@ -16,8 +14,8 @@ export default function Calendar() {
         {/* BODY */}
         <div className='flex h-full w-full flex-row  '>
           <SideBar />
-          <div className='w-full'>
-            <Typography variant='h3'>CALENDAR</Typography>
+          <div className='w-full p-10'>
+            <h2 className='mb-4 text-3xl font-bold text-primary'>My Calendar</h2>
             <div className=' p-1'>
               <CalendarGrid />
             </div>
