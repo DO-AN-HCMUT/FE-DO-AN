@@ -77,6 +77,19 @@ export default function TasksModal(props: ModelProps) {
     }
     return true;
   }, [deadline, isEdit]);
+  const handleDelete = async () => {
+    try {
+      await api.delete(`/task/${taskId}/delete?projectId=${projectId}`);
+      window.location.reload();
+      setIsOpenModal(false);
+    } catch (error: any) {
+      if (error?.response?.data.message === 'TokenExpiredError') {
+        toast.error('Please log in', { position: 'bottom-center' });
+      } else {
+        toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
+      }
+    }
+  };
   const handleAssign = (value: any) => {
     setIsEdit(true);
     setAssignedMember(value);
@@ -264,6 +277,11 @@ export default function TasksModal(props: ModelProps) {
                     onChange={(event) => handleChange(event.target.value, setDescription)}
                   />
                 </div>
+              </div>
+              <div>
+                <Button variant='outlined' color='error' className='w-full' onClick={handleDelete}>
+                  Delete
+                </Button>
               </div>
               <div className='my-2 flex flex-row justify-between self-end'>
                 <Button className='me-4 border-[1px]' onClick={handleClose} variant='outlined'>
