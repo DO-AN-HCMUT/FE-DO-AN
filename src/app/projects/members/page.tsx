@@ -26,7 +26,7 @@ export default function MemberPage() {
   const [deletingMemberId, setDeletingMemberId] = useState<string | null>(null);
 
   const searchParams = useSearchParams();
-  const projectId = searchParams.get('project-id')!;
+  const projectId = searchParams.get('projectId')!;
 
   const fetchMembers = useCallback(async () => {
     const response = await ProjectService.getProjectById(projectId);

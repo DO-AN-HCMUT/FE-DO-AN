@@ -56,7 +56,7 @@ export default function TasksModal(props: ModelProps) {
   };
   const { isOpenModal, setIsOpenModal, taskId } = props;
   const searchParams = useSearchParams();
-  const projectId = searchParams.get('project-id')!;
+  const projectId = searchParams.get('projectId')!;
   const [isEdit, setIsEdit] = useState(false);
   const [deadline, setDeadline] = useState('');
   const [assignedMember, setAssignedMember] = useState<any>([]);

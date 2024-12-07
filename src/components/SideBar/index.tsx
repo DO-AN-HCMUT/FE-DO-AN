@@ -7,7 +7,7 @@ export default function SideBar() {
   const isMdOrSmaller = useMediaQuery('(max-width:960px)');
   const searchParams = useSearchParams();
 
-  const projectId = searchParams.get('project-id')!;
+  const projectId = searchParams.get('projectId')!;
 
   return (
     <div className='h-full min-w-[200px] cursor-pointer border-r-[1px] border-[#ccc] px-2 py-4 '>
@@ -43,7 +43,7 @@ export default function SideBar() {
         <Tooltip title='Members' disableHoverListener={!isMdOrSmaller}>
           <Link
             className='mb-3 flex items-center justify-center rounded-lg px-4 py-2 transition-all duration-75 hover:bg-primary hover:text-white md:justify-normal'
-            href={`/projects/members?project-id=${projectId}`}
+            href={`/projects/members?projectId=${projectId}`}
           >
             <Image src='/images/sideBar/members.png' alt='members' width={20} height={20} className='me-3' />
             <p className='hidden md:inline'>Members</p>

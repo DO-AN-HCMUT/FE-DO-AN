@@ -6,12 +6,17 @@ type Project = {
   memberIds: string[];
   maxTaskIndex: number;
   createdAt: string;
+  description: string;
   name: string;
   key: string;
 };
 
 export type GetAllUserDto = (User & {
   isLeader: boolean;
+})[];
+
+export type GetAllProjectDto = (Project & {
+  leader: User;
 })[];
 
 export default Project;

@@ -9,7 +9,7 @@ export default function ProjectListItem(props: ProjectProps) {
   const { data } = props;
   const router = useRouter();
   const onClickHandle = (item: any) => {
-    router.push(`/projects/tasks?project-id=${item._id}`);
+    router.push(`/projects/tasks?projectId=${item._id}`);
   };
   return (
     <div>

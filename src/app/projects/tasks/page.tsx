@@ -45,7 +45,7 @@ export default function TaskPage() {
   };
   const taskFormRef = useRef<HTMLTableRowElement>(null);
   const searchParams = useSearchParams();
-  const projectId = searchParams.get('project-id')!;
+  const projectId = searchParams.get('projectId')!;
 
   const fetchTasks = useCallback(async () => {
     const response = await ProjectService.getProjectById(projectId);

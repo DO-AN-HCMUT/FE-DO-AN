@@ -1,5 +1,8 @@
 import clsx from 'clsx';
 
+import { COLOR_PAIRS } from '@/constants/common';
+import { hashStringToRange } from '@/utils/common';
+
 type UserProps = {
   name: string;
   avatar?: string;
@@ -9,49 +12,6 @@ type UserProps = {
   onDelete?: () => void;
 };
 
-const AVATAR_COLOR_STYLES = [
-  {
-    backgroundColor: '#1E88E5',
-    color: '#FFFFFF',
-  },
-  {
-    backgroundColor: '#43A047',
-    color: '#FFFFFF',
-  },
-  {
-    backgroundColor: '#FB8C00',
-    color: '#FFFFFF',
-  },
-  {
-    backgroundColor: '#F4511E',
-    color: '#FFFFFF',
-  },
-  {
-    backgroundColor: '#6D4C41',
-    color: '#FFFFFF',
-  },
-  {
-    backgroundColor: '#8E24AA',
-    color: '#FFFFFF',
-  },
-  {
-    backgroundColor: '#3949AB',
-    color: '#FFFFFF',
-  },
-  {
-    backgroundColor: '#E53935',
-    color: '#FFFFFF',
-  },
-  {
-    backgroundColor: '#00796B',
-    color: '#FFFFFF',
-  },
-  {
-    backgroundColor: '#5E35B1',
-    color: '#FFFFFF',
-  },
-];
-
 export default function User({ name, avatar, className, deleteIcon, onDelete, isDisplayName = true }: UserProps) {
   return (
     <div className={clsx('group relative flex items-center', className)}>
@@ -59,7 +19,7 @@ export default function User({ name, avatar, className, deleteIcon, onDelete, is
         <img src={avatar} alt='avatar' className='aspect-square w-7 min-w-6 rounded-full border border-zinc-400' />
       ) : (
         <div
-          style={AVATAR_COLOR_STYLES[Math.floor(Math.random() * 10)]}
+          style={COLOR_PAIRS[hashStringToRange(name)]}
           className='flex size-7 items-center justify-center rounded-full text-xs font-semibold'
         >
           {name

@@ -70,7 +70,7 @@ export default function Projects() {
   };
 
   const goToProject = (name: string) => {
-    router.push(`/projects/tasks?project-id=${name}`);
+    router.push(`/projects/tasks?projectId=${name}`);
   };
 
   useEffect(() => {
@@ -166,6 +166,13 @@ export default function Projects() {
                         Project Key:{' '}
                         {isProjectKeyLoading ? <Spinner className='inline-block' /> : <span>{projectKey}</span>}
                       </p>
+                    </div>
+                    <div className='mb-4'>
+                      <p className='mb-2 ps-1 font-semibold'>Description</p>
+                      <textarea
+                        placeholder='Describe your project'
+                        className='h-20 w-full rounded-lg border-[1px] border-[#616161] p-3 placeholder:text-[#616161] '
+                      />
                     </div>
                     <div className='flex flex-row justify-between self-end'>
                       <Button

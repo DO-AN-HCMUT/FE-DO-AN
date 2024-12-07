@@ -2,19 +2,24 @@
 
 import dayjs from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween';
+import Image from 'next/image';
+import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import Header from '@/components/Header';
 import SideBar from '@/components/SideBar';
 import { Spinner } from '@/components/Spinner';
-import { TASK_STATUS_COLOR } from '@/constants/common';
+import User from '@/components/User';
+import { COLOR_PAIRS, TASK_STATUS_COLOR } from '@/constants/common';
 import api from '@/services/api';
 import taskService from '@/services/task';
 import userService from '@/services/user';
+import { hashStringToRange } from '@/utils/common';
+import getStatusString from '@/utils/get-status-string';
 import storage from '@/utils/storage';
 
-import Project from '@/types/project';
+import { GetAllProjectDto } from '@/types/project';
 import { GetMyTaskDto } from '@/types/task';
 
 dayjs.extend(isBetween);
@@ -23,7 +28,7 @@ export default function MePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthStatusReady, setIsAuthStatusReady] = useState(false);
   const [tasks, setTasks] = useState<GetMyTaskDto>();
-  const [projects, setProjects] = useState<Project[]>();
+  const [projects, setProjects] = useState<GetAllProjectDto>();
 
   const checkToken = async () => {
     try {
@@ -83,25 +88,28 @@ export default function MePage() {
                   <div className='mb-4 flex'>
                     <div className='flex-[1] font-semibold text-primary'>ID</div>
                     <div className='flex-[3] font-semibold text-primary'>Name</div>
-                    <div className='flex-[1] font-semibold text-primary'>Status</div>
-                    <div className='flex-[2] font-semibold text-primary'>Deadline</div>
+                    <div className='flex-[1.5] font-semibold text-primary'>Status</div>
+                    <div className='flex-[1.2] font-semibold text-primary'>Deadline</div>
                     <div className='flex-[2] font-semibold text-primary'>Project</div>
                   </div>
                   {dueTasksToDisplay.map((task) => (
                     <div key={task._id} className='item-center mb-3 flex'>
                       <div className='flex-[1]'>{task.key}</div>
                       <div className='flex-[3]'>{task.title}</div>
-                      <div className='flex-[1]'>
+                      <div className='flex-[1.5]'>
                         <div
                           style={TASK_STATUS_COLOR[task.status]}
                           className='inline rounded-3xl border-[1px] border-[#ccc] px-3 py-1'
                         >
-                          {task.status}
+                          {getStatusString(task.status)}
                         </div>
                       </div>
-                      <div className='flex-[2]'>{dayjs(task.endDate).format('DD/MM/YYYY')}</div>
+                      <div className='flex-[1.2]'>{dayjs(task.endDate).format('DD/MM/YYYY')}</div>
                       <div className='flex-[2]'>
-                        <div className='inline rounded-lg border-[1px] border-[#ccc] bg-[#B64DD0] px-3 py-1 text-white'>
+                        <div
+                          style={COLOR_PAIRS[hashStringToRange(task.project.name)]}
+                          className='inline rounded-lg border-[1px] border-[#ccc] px-3 py-1'
+                        >
                           {task.project.name}
                         </div>
                       </div>
@@ -123,15 +131,25 @@ export default function MePage() {
                 </div>
               ) : projects.length > 0 ? (
                 <div className='overflow-auto px-3'>
-                  {projects?.slice(0, 4).map((project) => (
-                    <div key={project._id} className='mb-4 rounded-lg border-[1px] border-[#ccc] px-6 py-4'>
-                      <h5 className='mb-2 text-2xl font-semibold'>{project.name}</h5>
-                      <p>
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptates temporibus eos distinctio
-                        fugiat cumque est eaque commodi iure, nulla explicabo, facilis aperiam ea ex et quam aliquam
-                        ipsum incidunt error?
-                      </p>
-                    </div>
+                  {projects?.map((project) => (
+                    <Link
+                      href={`/projects/tasks?projectId=${project._id}`}
+                      key={project._id}
+                      className='mb-4 block rounded-lg border-[1px] border-[#ccc] px-6 py-4'
+                    >
+                      <div className='mb-5 flex items-center justify-between'>
+                        <div className='flex items-center'>
+                          <h5 className='me-3 border-s-4 border-primary ps-2 text-2xl font-semibold'>{project.name}</h5>
+                          <h6 className='text-lg font-bold text-primary'>({project.key})</h6>
+                        </div>
+                        <User name={project.leader.fullName} avatar={project.leader.avatar} />
+                      </div>
+                      <p className='mb-5 font-light'>{project.description}</p>
+                      <div className='flex space-x-1'>
+                        <Image src='/icons/calendar.svg' alt='calendar' width={20} height={20} className='' />
+                        <p>Created at: {dayjs(project.createdAt).format('DD/MM/YYYY')}</p>
+                      </div>
+                    </Link>
                   ))}
                 </div>
               ) : (
