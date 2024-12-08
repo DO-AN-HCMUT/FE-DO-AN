@@ -33,7 +33,7 @@ export default function Button({
           : type === 'neutral-positive'
             ? 'border-[1px] border-primary bg-white text-primary hover:bg-primary hover:text-white'
             : type === 'neutral-negative' && 'border-[1px] border-red bg-white text-red hover:bg-red hover:text-white',
-    'rounded-lg px-4 py-2 transition-all',
+    'rounded-lg px-4 py-2 transition-all select-none',
     className,
   );
 

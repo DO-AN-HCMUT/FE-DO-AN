@@ -14,7 +14,7 @@ type UserProps = {
 
 export default function User({ name, avatar, className, deleteIcon, onDelete, isDisplayName = true }: UserProps) {
   return (
-    <div className={clsx('group relative flex items-center', className)}>
+    <div title={!isDisplayName ? name : ''} className={clsx('group relative flex items-center', className)}>
       {avatar ? (
         <img src={avatar} alt='avatar' className='aspect-square w-7 min-w-6 rounded-full border border-zinc-400' />
       ) : (

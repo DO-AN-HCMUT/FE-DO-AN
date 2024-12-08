@@ -9,7 +9,7 @@ import AddChatItem from '@/components/ChatComponent/AddChatItem';
 import ChatItem from '@/components/ChatComponent/ChatItem';
 import ContentSpace from '@/components/ChatComponent/ContentSpace';
 import Header from '@/components/Header';
-import SideBar from '@/components/SideBar';
+import Sidebar from '@/components/Sidebar';
 import api from '@/services/api';
 
 import Loading from '../loading';
@@ -89,7 +89,7 @@ export default function Chat() {
       <Header socket={socket} />
       {/* BODY */}
       <div className='flex h-full flex-row '>
-        <SideBar />
+        <Sidebar />
         <div className=' w-11/12'>
           <div className='mb-2'>
             <AddChatItem receiver={conservation?.receiver} sender={conservation?.sender} />

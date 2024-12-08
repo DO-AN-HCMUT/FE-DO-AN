@@ -1,36 +1,29 @@
-import {
-  Box,
-  Button,
-  Chip,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Modal,
-  Select,
-  TextField,
-  Typography,
-} from '@mui/material';
-import { DatePicker, DateRangeIcon, LocalizationProvider } from '@mui/x-date-pickers';
+import { Box, FormControl, InputLabel, MenuItem, Modal, Select, TextField, Typography } from '@mui/material';
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
 import { useSearchParams } from 'next/navigation';
-import { useCallback, useEffect, useState } from 'react';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 
+import Button from '@/components/Button';
+import TaskStatus from '@/components/TaskStatus';
+import User from '@/components/User';
 import { TASK_STATUS_COLOR } from '@/constants/common';
 import api from '@/services/api';
-import getStatusString from '@/utils/get-status-string';
 
 import Task from '@/types/task';
 import TaskStatusType from '@/types/task-status';
-import User from '@/types/user';
+import UserType from '@/types/user';
 
-/* eslint-disable no-tabs */
-type ModelProps = {
+type TaskModalProps = {
   isOpenModal: boolean;
-  setIsOpenModal: any;
-  taskId: string | undefined;
+  onClose: () => void;
+  task: Task;
+  updateSuccessCallback: () => void;
+  memberOptions: UserType[];
 };
+
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
@@ -42,47 +35,25 @@ const MenuProps = {
   },
 };
 
-export default function TasksModal(props: ModelProps) {
-  const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 500,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
-  };
-  const { isOpenModal, setIsOpenModal, taskId } = props;
+export default function TasksModal({
+  isOpenModal,
+  onClose,
+  task: initialTask,
+  updateSuccessCallback,
+  memberOptions,
+}: TaskModalProps) {
   const searchParams = useSearchParams();
   const projectId = searchParams.get('projectId')!;
-  const [isEdit, setIsEdit] = useState(false);
-  const [deadline, setDeadline] = useState('');
-  const [assignedMember, setAssignedMember] = useState<any>([]);
-  const [tasks, setTasks] = useState<Task>();
-  const [description, setDescription] = useState('');
-  const [projectMembers, setProjectMembers] = useState<User[]>([]);
-  const [status, setStatus] = useState<TaskStatusType>();
-  const handleClose = () => {
-    setIsEdit(false);
-    setIsOpenModal(false);
-  };
-  const handleChange = (value: any, method: any) => {
-    setIsEdit(true);
-    method(value);
-  };
-  const handleDisable = useCallback(() => {
-    if (new Date(deadline).getTime() > new Date().getTime() && isEdit) {
-      return false;
-    }
-    return true;
-  }, [deadline, isEdit]);
+
+  const [task, setTask] = useState<Task>(initialTask);
+  const [isTitleEditing, setIsTitleEditing] = useState(false);
+
   const handleDelete = async () => {
     try {
-      await api.delete(`/task/${taskId}/delete?projectId=${projectId}`);
-      window.location.reload();
-      setIsOpenModal(false);
+      await api.delete(`/task/${task._id}/delete?projectId=${projectId}`);
+      toast.success('Task deleted successfully');
+      onClose();
+      updateSuccessCallback();
     } catch (error: any) {
       if (error?.response?.data.message === 'TokenExpiredError') {
         toast.error('Please log in', { position: 'bottom-center' });
@@ -91,211 +62,187 @@ export default function TasksModal(props: ModelProps) {
       }
     }
   };
-  const handleAssign = (value: any) => {
-    setIsEdit(true);
-    setAssignedMember(value);
-  };
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
-    try {
-      const payload = {
-        endDate: deadline,
-        registeredMembers: assignedMember,
-        description,
-        status,
-      };
-      await api.put(`/task/${taskId}/update`, { payload });
-      // toast.success('Success');
-      window.location.reload();
-      setIsOpenModal(false);
-    } catch (error: any) {
-      if (error?.response?.data.message === 'TokenExpiredError') {
-        toast.error('Please log in', { position: 'bottom-center' });
-      } else {
-        toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
-      }
-    }
-  };
-  const getDetailTask = useCallback(async () => {
-    if (taskId) {
-      try {
-        const result = await api.get(`/task/${taskId}/getDetail`);
-        Promise.all([result, getMembers()]);
 
-        setAssignedMember(result.data.payload.memberDetail.map((item: any) => item._id));
-        setDeadline(new Date(result.data.payload?.endDate as string).toString());
-        setDescription(result.data.payload?.description);
-        setStatus(result.data.payload.status);
-        setTasks(result.data.payload);
-      } catch (error: any) {
-        if (error?.response?.data.message === 'TokenExpiredError') {
-          toast.error('Please log in', { position: 'bottom-center' });
-          setTimeout(() => {
-            window.location.href = '/auth/sign-in';
-          }, 4000);
-        } else {
-          toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
-        }
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [taskId]);
-  const getMembers = useCallback(async () => {
+  const handleSubmit = async () => {
     try {
-      const result = await api.get(`/project/${projectId}/members`);
-      // console.log(result.data.payload);
-      setProjectMembers(result.data.payload);
+      await api.put(`/task/${task._id}/update`, {
+        payload: {
+          title: task.title,
+          description: task.description,
+          status: task.status,
+          endDate: task.endDate,
+          registeredMembers: task.registeredMembers.map((member) => member._id),
+        },
+      });
+      toast.success('Task updated successfully');
+      onClose();
+      updateSuccessCallback();
     } catch (error: any) {
       if (error?.response?.data.message === 'TokenExpiredError') {
         toast.error('Please log in', { position: 'bottom-center' });
-        setTimeout(() => {
-          window.location.href = '/auth/sign-in';
-        }, 4000);
       } else {
         toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
       }
     }
-  }, [projectId]);
+  };
 
-  useEffect(() => {
-    getDetailTask();
-  }, [getDetailTask]);
   return (
     <div>
       <Modal
         open={isOpenModal}
-        onClose={handleClose}
+        onClose={onClose}
         aria-labelledby='modal-modal-title'
         aria-describedby='modal-modal-description'
       >
-        <Box sx={style}>
-          <div>Task Key: {tasks?.key}</div>
-          <div className='my-2 flex flex-row justify-between'>
-            <div>
-              <Typography id='modal-modal-title' variant='h5' component='h1'>
-                Task Detail
-              </Typography>
-              <div>
-                Task Name: <span>{tasks?.title}</span>
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 1000,
+            bgcolor: 'background.paper',
+            border: '2px solid #000',
+            boxShadow: 24,
+            p: 4,
+          }}
+        >
+          <div className='mb-5 flex flex-grow flex-row items-center justify-between'>
+            <div className='w-full'>
+              <div className='ms-2'>{task.key}</div>
+              <div className='w-full max-w-[600px] flex-grow'>
+                {isTitleEditing ? (
+                  <TextField
+                    value={task.title}
+                    variant='standard'
+                    fullWidth
+                    onBlur={() => setIsTitleEditing(false)}
+                    autoFocus
+                  />
+                ) : (
+                  <div className='w-fit cursor-pointer p-2 hover:bg-slate-300' onClick={() => setIsTitleEditing(true)}>
+                    <Typography id='modal-modal-title' variant='h5' component='h1'>
+                      {task.title}
+                    </Typography>
+                  </div>
+                )}
               </div>
             </div>
-            <div>
+            <div className='w-fit'>
               <FormControl>
+                <InputLabel>Status</InputLabel>
                 <Select
-                  labelId='status-chip'
-                  id='status-chip'
-                  value={status}
-                  onChange={(value) => handleChange(value.target.value, setStatus)}
-                  renderValue={(selected) => (
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                      <Chip key={selected} label={getStatusString(selected)} style={TASK_STATUS_COLOR[selected]} />
-                    </Box>
-                  )}
+                  label='status'
+                  value={task.status}
+                  onChange={(value) => setTask({ ...task, status: value.target.value as TaskStatusType })}
+                  renderValue={(selected) => <TaskStatus status={selected} />}
                   MenuProps={MenuProps}
                 >
-                  {Object.keys(TASK_STATUS_COLOR).map((item: string, index: number) => (
-                    <MenuItem key={index} value={item}>
-                      <Chip label={getStatusString(item)} style={TASK_STATUS_COLOR[item as TaskStatusType]} />
+                  {Object.keys(TASK_STATUS_COLOR).map((item) => (
+                    <MenuItem key={item} value={item}>
+                      <TaskStatus status={item as TaskStatusType} />
                     </MenuItem>
                   ))}
                 </Select>
               </FormControl>
             </div>
           </div>
-          <div className='flex w-full flex-col items-stretch justify-between'>
-            <form onSubmit={handleSubmit}>
-              <div className='my-2 flex w-full flex-row'>
-                <div className='flex w-6/12 flex-row  p-1'>
-                  <DateRangeIcon fontSize='large' />
-                  <div>
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <DatePicker
-                        label='CreateDate'
-                        value={dayjs(tasks?.createdAt)}
-                        disabled
-                        views={['year', 'month', 'day']}
-                      />
-                    </LocalizationProvider>
-                  </div>
-                </div>
-                <div className='flex w-6/12 flex-row  p-1'>
-                  <DateRangeIcon fontSize='large' />
-                  <div>
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <DatePicker
-                        label='Deadline'
-                        value={dayjs(deadline)}
-                        onChange={(value) => handleChange(value?.toDate().toString(), setDeadline)}
-                        disablePast
-                        views={['year', 'month', 'day']}
-                      />
-                    </LocalizationProvider>
-                  </div>
-                </div>
-              </div>
-              <div className='my-2'>
-                Assigned to
-                <div className='my-2'>
-                  <FormControl sx={{ width: 430 }}>
-                    <InputLabel id='member-label'>Members</InputLabel>
-                    <Select
-                      labelId='member-label'
-                      id='member-chip'
-                      multiple
-                      value={assignedMember}
-                      onChange={(value) => handleAssign(value.target.value)}
-                      renderValue={(selected) => (
-                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                          {/* <Chip key={selected._id} label={selected.fullName} /> */}
-                          {selected.map((item: any) => (
-                            <div key={item}>
-                              {projectMembers.filter((member: any) => member._id === item)[0]?.fullName}
-                            </div>
-                          ))}
-                        </Box>
-                      )}
-                      MenuProps={MenuProps}
-                    >
-                      {projectMembers.map((name: any, index: number) => (
-                        <MenuItem key={index} value={name._id}>
-                          {name.fullName}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </div>
-              </div>
-              <div>
-                Description
-                <div className='my-2'>
-                  <TextField
-                    id='description'
-                    variant='outlined'
-                    multiline
-                    maxRows={4}
-                    value={description}
-                    fullWidth
-                    onChange={(event) => handleChange(event.target.value, setDescription)}
-                  />
-                </div>
-              </div>
-              <div>
-                <Button variant='outlined' color='error' className='w-full' onClick={handleDelete}>
-                  Delete
-                </Button>
-              </div>
-              <div className='my-2 flex flex-row justify-between self-end'>
-                <Button className='me-4 border-[1px]' onClick={handleClose} variant='outlined'>
-                  Cancel
-                </Button>
-                <Button type='submit' disabled={handleDisable()} variant='outlined'>
-                  Submit
-                </Button>
-              </div>
-            </form>
+          <div className='mb-5 flex w-full items-stretch justify-between space-x-5'>
+            <div className='w-[60%]'>
+              <TextField
+                id='description'
+                variant='outlined'
+                label='Description'
+                multiline
+                minRows={4}
+                value={task.description}
+                fullWidth
+                onChange={(event) => setTask({ ...task, description: event.target.value })}
+              />
+            </div>
+
+            <div className='flex flex-grow flex-col items-stretch space-y-5'>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  label='Date Created'
+                  value={dayjs(task.createdAt)}
+                  disabled
+                  views={['year', 'month', 'day']}
+                  format='DD/MM/YYYY'
+                />
+              </LocalizationProvider>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  label='Deadline'
+                  value={task.endDate ? dayjs(task.endDate) : undefined}
+                  onChange={(value) => setTask({ ...task, endDate: value?.toDate().toString() })}
+                  views={['year', 'month', 'day']}
+                  format='DD/MM/YYYY'
+                />
+              </LocalizationProvider>
+              <FormControl>
+                <InputLabel>Assignee</InputLabel>
+                <Select
+                  label='Members'
+                  multiple
+                  value={task.registeredMembers.map((user) => user._id)}
+                  onChange={(value) =>
+                    setTask({
+                      ...task,
+                      registeredMembers: (value.target.value as string[]).map(
+                        (id) => memberOptions.find((option) => option._id === id)!,
+                      ),
+                    })
+                  }
+                  renderValue={(selected) => (
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                      {selected.map((item) => {
+                        const user = memberOptions.find((option) => option._id === item);
+                        return (
+                          <div key={item}>
+                            <User name={user!.fullName} avatar={user!.avatar} isDisplayName={selected.length === 1} />
+                          </div>
+                        );
+                      })}
+                    </Box>
+                  )}
+                  MenuProps={MenuProps}
+                >
+                  {memberOptions.map((user) => (
+                    <MenuItem key={user._id} value={user._id}>
+                      <User name={user.fullName} avatar={user.avatar} />
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </div>
+          </div>
+          <div className='flex w-full items-center justify-between'>
+            <Button type='negative' onClick={handleDelete}>
+              Delete Task
+            </Button>
+            <div className='flex items-center space-x-2'>
+              <Button type='neutral-positive' onClick={onClose}>
+                Cancel
+              </Button>
+              <Button type='positive' onClick={handleSubmit}>
+                Submit
+              </Button>
+            </div>
           </div>
         </Box>
       </Modal>
     </div>
   );
 }
+// ObjectId('674c06f3e9283ab4834d9318'),
+// ObjectId('674c071ae9283ab4834d9319'),
+// ObjectId('674c0721e9283ab4834d931a'),
+// ObjectId('674c0729e9283ab4834d931b'),
+// ObjectId('674c0736e9283ab4834d931c'),
+// ObjectId('674c0745e9283ab4834d931d'),
+// ObjectId('674c0756e9283ab4834d931e'),
+// ObjectId('674c109a5b8053972370c7cd'),
+// ObjectId('674c4d59e48f404af35ab6c1'),
+// ObjectId('6751dfd1716eb4706ccd5727'),
+// ObjectId('67527522d30be8755707d43d')

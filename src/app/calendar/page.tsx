@@ -2,7 +2,7 @@
 
 import CalendarGrid from '@/components/CalendarComponent/CalendarGrid';
 import Header from '@/components/Header';
-import SideBar from '@/components/SideBar';
+import Sidebar from '@/components/Sidebar';
 
 /* eslint-disable no-tabs */
 export default function Calendar() {
@@ -13,7 +13,7 @@ export default function Calendar() {
         <Header />
         {/* BODY */}
         <div className='flex h-full w-full flex-row  '>
-          <SideBar />
+          <Sidebar />
           <div className='w-full p-10'>
             <h2 className='mb-4 text-3xl font-bold text-primary'>My Calendar</h2>
             <div className=' p-1'>

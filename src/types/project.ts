@@ -11,6 +11,10 @@ type Project = {
   key: string;
 };
 
+export type GetProjectByIdDto = Project & {
+  isMeLeader: boolean;
+};
+
 export type GetAllUserDto = (User & {
   isLeader: boolean;
 })[];

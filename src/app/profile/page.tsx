@@ -1,7 +1,7 @@
 'use client';
 import Header from '@/components/Header';
 import ProfileLayout from '@/components/ProfileComponent/ProfileLayout';
-import SideBar from '@/components/SideBar';
+import Sidebar from '@/components/Sidebar';
 /* eslint-disable no-tabs */
 export default function Profile() {
   return (
@@ -11,7 +11,7 @@ export default function Profile() {
         <Header />
         {/* BODY */}
         <div className='flex h-screen flex-row '>
-          <SideBar />
+          <Sidebar />
           <div className='h-screen w-11/12'>
             <ProfileLayout />
           </div>

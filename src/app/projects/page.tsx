@@ -7,7 +7,7 @@ import { useDebounceValue } from 'usehooks-ts';
 
 import Header from '@/components/Header';
 import ListItem from '@/components/ProjectsComponent/ListItem';
-import SideBar from '@/components/SideBar';
+import Sidebar from '@/components/Sidebar';
 import { Spinner } from '@/components/Spinner';
 import TextInput from '@/components/TextInput';
 import api from '@/services/api';
@@ -119,7 +119,7 @@ export default function Projects() {
         <Header />
         {/* BODY */}
         <div className='flex h-screen flex-row  '>
-          <SideBar />
+          <Sidebar />
           <div className='w-full'>
             <div>
               <Typography variant='h2'>PROJECTS</Typography>

@@ -8,17 +8,17 @@ import toast from 'react-hot-toast';
 
 import Button from '@/components/Button';
 import Header from '@/components/Header';
-import SideBar from '@/components/SideBar';
+import Sidebar from '@/components/Sidebar';
 import TextInput from '@/components/TextInput';
 import User from '@/components/User';
 import ProjectService from '@/services/project';
 import { isValidEmail } from '@/utils/common';
 
-import { GetAllUserDto } from '@/types/project';
+import { GetAllUserDto, GetProjectByIdDto } from '@/types/project';
 
 export default function MemberPage() {
   const [isAdding, setIsAdding] = useState(false);
-  const [projectName, setProjectName] = useState<string>();
+  const [project, setProject] = useState<GetProjectByIdDto>();
   const [members, setMembers] = useState<GetAllUserDto>();
   const [search, setSearch] = useState('');
   const [newMemberEmails, setNewMemberEmails] = useState<string[]>([]);
@@ -30,7 +30,7 @@ export default function MemberPage() {
 
   const fetchMembers = useCallback(async () => {
     const response = await ProjectService.getProjectById(projectId);
-    setProjectName(response.name);
+    setProject(response);
     setMembers(await ProjectService.getAllUsers(projectId));
   }, [projectId]);
 
@@ -67,7 +67,7 @@ export default function MemberPage() {
     }
   };
 
-  if (!projectName || !members) return null;
+  if (!project || !members) return null;
 
   return (
     <>
@@ -76,23 +76,25 @@ export default function MemberPage() {
         <Header />
         {/* BODY */}
         <div className='flex flex-grow overflow-hidden'>
-          <SideBar />
+          <Sidebar />
           <div className='flex flex-grow flex-col items-start p-10'>
             <h1 className='mb-2 text-lg'>
               <Link className='hover:underline' href='/projects'>
                 Projects
               </Link>{' '}
-              / {projectName}
+              / {project.name}
             </h1>
             <h2 className='mb-5 text-3xl font-bold text-primary'>Members</h2>
-            <Button
-              className='mb-5'
-              onClick={() => {
-                setIsAdding(true);
-              }}
-            >
-              + New member
-            </Button>
+            {project.isMeLeader && (
+              <Button
+                className='mb-5'
+                onClick={() => {
+                  setIsAdding(true);
+                }}
+              >
+                + New member
+              </Button>
+            )}
 
             {/* UTILITY BUTTONS */}
             <div className='mb-4 flex w-full items-center space-x-2'>
@@ -125,7 +127,7 @@ export default function MemberPage() {
                     <th className='w-[10%] ps-4 text-left'>No.</th>
                     <th className='w-[35%] ps-4 text-left'>Name</th>
                     <th className='w-[25%] ps-4 text-left'>Email</th>
-                    <th className='w-[15%] ps-4'>Role</th>
+                    <th className='w-[15%]'>Role</th>
                     <th className='w-[15%] ps-4'>Actions</th>
                   </tr>
                 </thead>
@@ -150,13 +152,14 @@ export default function MemberPage() {
                         <td className='px-4'>{member.email}</td>
                         <td className='px-4 text-center'>{member.isLeader ? 'Leader' : 'Member'}</td>
                         <td className='space-x-2 px-4 text-center'>
-                          {/* <button onClick={() => setEditingMember} className='text-primary hover:text-primary-dark hover:underline'>Edit</button> */}
-                          <button
-                            onClick={() => setDeletingMemberId(member._id)}
-                            className='hover:text-red-dark text-red hover:underline'
-                          >
-                            Delete
-                          </button>
+                          {!member.isLeader && project.isMeLeader && (
+                            <button
+                              onClick={() => setDeletingMemberId(member._id)}
+                              className='hover:text-red-dark text-red hover:underline'
+                            >
+                              Delete
+                            </button>
+                          )}
                         </td>
                       </tr>
                     ))}
@@ -182,7 +185,7 @@ export default function MemberPage() {
                       }}
                     >
                       <Typography id='modal-modal-title' variant='h5' component='h1'>
-                        Create Project
+                        Add Member
                       </Typography>
                       <div className='flex w-full flex-col items-stretch justify-between pt-5'>
                         <div className='mb-5 flex grow flex-col justify-center'>

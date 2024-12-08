@@ -8,7 +8,7 @@ import { redirect } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import Header from '@/components/Header';
-import SideBar from '@/components/SideBar';
+import Sidebar from '@/components/Sidebar';
 import { Spinner } from '@/components/Spinner';
 import User from '@/components/User';
 import { COLOR_PAIRS, TASK_STATUS_COLOR } from '@/constants/common';
@@ -73,7 +73,7 @@ export default function MePage() {
       <Header />
       {/* BODY */}
       <div className='flex flex-grow overflow-hidden'>
-        <SideBar />
+        <Sidebar />
         {/* CONTENT */}
         <div className='flex w-11/12 items-stretch bg-[#eee] p-5'>
           <div className='flex flex-[2] flex-col pe-10'>
@@ -130,12 +130,12 @@ export default function MePage() {
                   <Spinner size='lg' />
                 </div>
               ) : projects.length > 0 ? (
-                <div className='overflow-auto px-3'>
+                <div className='overflow-y-auto overflow-x-visible px-5 py-2'>
                   {projects?.map((project) => (
                     <Link
                       href={`/projects/tasks?projectId=${project._id}`}
                       key={project._id}
-                      className='mb-4 block rounded-lg border-[1px] border-[#ccc] px-6 py-4'
+                      className='mb-4 block rounded-lg border-[1px] border-[#ccc] px-6 py-4 shadow transition-all duration-100 hover:scale-105'
                     >
                       <div className='mb-5 flex items-center justify-between'>
                         <div className='flex items-center'>

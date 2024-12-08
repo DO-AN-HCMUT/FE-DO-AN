@@ -97,7 +97,7 @@ const TaskForm = forwardRef<HTMLTableRowElement, TaskFormProps>(({ projectId, on
               onBlur={() => setIsMemberSearching(false)}
             />
             {isMemberSearching && (
-              <div className='absolute -left-1 top-[100%] mt-2 w-full rounded-lg shadow'>
+              <div className='absolute -left-1 top-[100%] z-10 mt-2 max-h-[200px] w-full overflow-auto rounded-lg bg-white shadow-md'>
                 {memberSearchResults.length > 0 ? (
                   memberSearchResults.map((member) => (
                     <div
@@ -134,7 +134,7 @@ const TaskForm = forwardRef<HTMLTableRowElement, TaskFormProps>(({ projectId, on
               className=''
             />
             {isSelectingStatus && (
-              <div className='absolute -left-1 top-[100%] mt-2 w-full rounded-lg shadow'>
+              <div className='absolute -left-1 top-[100%] z-10 mt-2 w-full rounded-lg bg-white shadow-md'>
                 <div
                   className='flex cursor-pointer px-3 py-1.5 hover:bg-slate-100'
                   onClick={(e) => {
@@ -202,7 +202,7 @@ const TaskForm = forwardRef<HTMLTableRowElement, TaskFormProps>(({ projectId, on
         )}
       </td>
       {isAdding && (
-        <Button className='absolute right-0 top-14' onClick={handleSubmit}>
+        <Button className='absolute right-0 top-12 z-10' onClick={handleSubmit}>
           Submit
         </Button>
       )}

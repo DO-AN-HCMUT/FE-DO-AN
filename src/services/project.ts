@@ -1,13 +1,13 @@
 import api from './api';
 
-import Project, { GetAllUserDto } from '@/types/project';
+import { GetAllUserDto, GetProjectByIdDto } from '@/types/project';
 import Response from '@/types/response';
 import Task, { CreateTaskRequestDto } from '@/types/task';
 
 const BASE_URL = '/project';
 
 const getProjectById = async (id: string) => {
-  return (await api.get<Response<Project>>(`${BASE_URL}/${id}/get`)).data.payload;
+  return (await api.get<Response<GetProjectByIdDto>>(`${BASE_URL}/${id}/get`)).data.payload;
 };
 
 const getAllTasksByProjectId = async (id: string) => {
