@@ -1,62 +1,33 @@
 'use client';
-import { Box, Button, Modal, Typography } from '@mui/material';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import { useDebounceValue } from 'usehooks-ts';
 
+import Button from '@/components/Button';
+import CreateProjectModal from '@/components/CreateProjectModal';
 import Header from '@/components/Header';
-import ListItem from '@/components/ProjectsComponent/ListItem';
 import Sidebar from '@/components/Sidebar';
 import { Spinner } from '@/components/Spinner';
-import TextInput from '@/components/TextInput';
-import api from '@/services/api';
+import User from '@/components/User';
+import UserService from '@/services/user';
 
-/* eslint-disable no-tabs */
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  p: 4,
-};
+import { GetAllProjectDto } from '@/types/project';
 
 export default function Projects() {
-  const [projectList, setProjectList] = useState<any>([]);
-  const [isOpenModal, setIsOpenModal] = useState(false);
-  const handleOpen = () => setIsOpenModal(true);
-  const handleClose = () => setIsOpenModal(false);
-  const [projectName, setProjectName] = useState('');
-  const [debouncedProjectName, setDebouncedProjectName] = useDebounceValue('', 1000);
-  const [projectKey, setProjectKey] = useState('');
-  const [isProjectKeyLoading, setIsProjectKeyLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [projects, setProjects] = useState<GetAllProjectDto>();
+  const [isAdding, setIsAdding] = useState(false);
+  const [search, setSearch] = useState('');
+  const [sortField, setSortField] = useState<string>();
+  const [sortType, setSortType] = useState<number>(1);
+
   const router = useRouter();
 
-  const handleSubmit = async () => {
+  const fetchData = async () => {
+    setIsLoading(true);
     try {
-      const payload = {
-        name: projectName.trim(),
-        key: projectKey,
-      };
-      await api.post('/project/new', payload);
-      toast.success('Project added successfully');
-    } catch (error: any) {
-      if (error?.response?.data.message === 'TokenExpiredError') {
-        toast.error('Please log in', { position: 'bottom-center' });
-      } else {
-        toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
-      }
-    }
-  };
-
-  const getData = async () => {
-    try {
-      const dataList = await api.get('/user/projects');
-      setProjectList(dataList.data.payload);
+      setProjects(await UserService.getMyProjects());
     } catch (error: any) {
       if (error?.response?.data.message === 'TokenExpiredError') {
         toast.error('Please log in', { position: 'bottom-center' });
@@ -67,50 +38,23 @@ export default function Projects() {
         toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
       }
     }
-  };
-
-  const goToProject = (name: string) => {
-    router.push(`/projects/tasks?projectId=${name}`);
+    setIsLoading(false);
   };
 
   useEffect(() => {
-    getData();
+    fetchData();
   }, []);
 
-  const generateProjectKey = useCallback(async (projectName: string) => {
-    let key = projectName
-      .split(' ')
-      .slice(0, 2)
-      .map((word) => word[0])
-      .join('')
-      .toUpperCase();
+  if (!projects || isLoading)
+    return (
+      <div className='flex h-screen w-full items-center justify-center'>
+        <Spinner size='lg' />
+      </div>
+    );
 
-    while (true) {
-      try {
-        await api.post('/project/key', { key });
-        break;
-      } catch (e) {
-        console.error(e);
-        if (key.length === 2) {
-          key += 'A';
-        } else {
-          key = key.slice(0, 2) + String.fromCharCode(key.charCodeAt(2) + 1);
-        }
-      }
-    }
-
-    setProjectKey(key);
-    setIsProjectKeyLoading(false);
-  }, []);
-
-  useEffect(() => {
-    if (!debouncedProjectName) {
-      setProjectKey('');
-      setIsProjectKeyLoading(false);
-      return;
-    }
-    generateProjectKey(debouncedProjectName);
-  }, [debouncedProjectName, generateProjectKey]);
+  const processedProjects = projects.filter((project: any) =>
+    project.name.toLowerCase().includes(search.toLowerCase()),
+  );
 
   return (
     <div>
@@ -120,81 +64,117 @@ export default function Projects() {
         {/* BODY */}
         <div className='flex h-screen flex-row  '>
           <Sidebar />
-          <div className='w-full'>
-            <div>
-              <Typography variant='h2'>PROJECTS</Typography>
+          <div className='flex flex-grow flex-col items-start p-10'>
+            <h2 className='mb-5 text-3xl font-bold text-primary'>Projects</h2>
+            <div className='flex w-full flex-row items-center justify-between'>
+              <Button
+                className='mb-5'
+                onClick={() => {
+                  setIsAdding(true);
+                }}
+              >
+                + New project
+              </Button>
             </div>
-            <div className='grid grid-cols-4 gap-4 overflow-auto p-9'>
-              <div>
-                <ListItem onClickFunction={handleOpen} />
+
+            {/* UTILITY BUTTONS */}
+            <div className='mb-4 flex w-full items-center space-x-2'>
+              <div className='flex flex-grow items-center rounded-lg border px-2'>
+                <img src='/icons/search.svg' alt='search-icon' />
+                <input
+                  value={search}
+                  onInput={(e) => {
+                    setSearch(e.currentTarget.value);
+                  }}
+                  type='text'
+                  className='ml-2 h-10 w-full border-l px-2 outline-none'
+                />
               </div>
-              {projectList?.map((item: any, index: number) => {
-                return (
-                  <div key={index}>
-                    <ListItem projectName={item.name} onClickFunction={() => goToProject(item._id)} />
-                  </div>
-                );
-              })}
             </div>
-            <Modal
-              open={isOpenModal}
-              onClose={handleClose}
-              aria-labelledby='modal-modal-title'
-              aria-describedby='modal-modal-description'
-            >
-              <Box sx={style}>
-                <Typography id='modal-modal-title' variant='h5' component='h1'>
-                  Create Project
-                </Typography>
-                <div className='flex w-full flex-col items-stretch justify-between pt-5'>
-                  <form onSubmit={handleSubmit}>
-                    <div className='mb-4 flex grow flex-col justify-center'>
-                      <p className='mb-2 ps-1 font-semibold'>Project Name</p>
-                      <TextInput
-                        placeholder='Enter project name'
-                        value={projectName}
-                        onInput={(projectName) => {
-                          setProjectName(projectName);
-                          setDebouncedProjectName(projectName);
-                          setIsProjectKeyLoading(true);
-                        }}
-                        type='text'
-                      />
-                    </div>
-                    <div className='mb-4 flex grow flex-col justify-center'>
-                      <p className='mb-2 ps-1 text-sm font-light'>
-                        Project Key:{' '}
-                        {isProjectKeyLoading ? <Spinner className='inline-block' /> : <span>{projectKey}</span>}
-                      </p>
-                    </div>
-                    <div className='mb-4'>
-                      <p className='mb-2 ps-1 font-semibold'>Description</p>
-                      <textarea
-                        placeholder='Describe your project'
-                        className='h-20 w-full rounded-lg border-[1px] border-[#616161] p-3 placeholder:text-[#616161] '
-                      />
-                    </div>
-                    <div className='flex flex-row justify-between self-end'>
-                      <Button
-                        className='me-4 border-[1px] border-primary bg-white text-primary hover:bg-rose-500 hover:text-white'
-                        onClick={handleClose}
-                      >
-                        Cancel
-                      </Button>
-                      <Button
-                        className='bg-primary text-white hover:bg-primary-dark'
-                        type='submit'
-                        disabled={!projectName.trim()}
-                      >
-                        Submit
-                      </Button>
-                    </div>
-                  </form>
+
+            {/* TASKS */}
+            <div className='self-center overflow-auto pb-5'>
+              {processedProjects.length > 0 ? (
+                <table className='w-full table-fixed border-collapse'>
+                  <thead>
+                    <tr className='h-12 rounded-lg bg-[#e4f8fa]'>
+                      <th className='w-[10%] ps-4 text-left'>No.</th>
+                      <th className='w-[45%] ps-4 text-left'>
+                        <div
+                          className='inline-flex cursor-pointer space-x-1'
+                          onClick={() => {
+                            setSortField('name');
+                            setSortType(sortType * -1);
+                          }}
+                        >
+                          <span className='select-none'>Name</span>
+                          {sortField === 'name' &&
+                            (sortType === -1 ? (
+                              <Image src='/icons/arrow_up.svg' alt='arrow-up' width={20} height={20} />
+                            ) : (
+                              <Image src='/icons/arrow_down.svg' alt='arrow-up' width={20} height={20} />
+                            ))}
+                        </div>
+                      </th>
+                      <th className='w-[15%] ps-4 text-left'>Key</th>
+                      <th className='w-[15%] ps-4 text-center'>Members</th>
+                      <th className='w-[15%]'>
+                        <div
+                          className='inline-flex cursor-pointer space-x-1'
+                          onClick={() => {
+                            setSortField('leader');
+                            setSortType(sortType * -1);
+                          }}
+                        >
+                          <span className='select-none'>Leader</span>
+                          {sortField === 'leader' &&
+                            (sortType === -1 ? (
+                              <Image src='/icons/arrow_up.svg' alt='arrow-up' width={20} height={20} />
+                            ) : (
+                              <Image src='/icons/arrow_down.svg' alt='arrow-up' width={20} height={20} />
+                            ))}
+                        </div>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {processedProjects.map((project, index) => {
+                      return (
+                        <>
+                          <tr
+                            className='h-12 cursor-pointer border-b transition-all duration-100 hover:bg-[#0b363b10]'
+                            key={project.key}
+                            onClick={() => router.push(`/projects/tasks?projectId=${project._id}`)}
+                          >
+                            <td className='px-4'>{index + 1}</td>
+                            <td className='px-4'>{project.name}</td>
+                            <td className='px-4'>{project.key}</td>
+                            <td className='px-4 text-center'>{project.memberIds.length}</td>
+                            <td className='px-4'>
+                              <User name={project.leader.fullName} avatar={project.leader.avatar} />
+                            </td>
+                          </tr>
+                        </>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              ) : (
+                <div className='mt-20 flex w-full flex-col items-center'>
+                  <Image src='/images/no-task.png' alt='no-task' width={200} height={200} className='mb-3' />
+                  <p className='text-lg'>You have no project. Create one now!</p>
                 </div>
-              </Box>
-            </Modal>
+              )}
+            </div>
           </div>
         </div>
+        <CreateProjectModal
+          isAdding={isAdding}
+          onClose={() => {
+            setIsAdding(false);
+          }}
+          onSubmitSuccess={fetchData}
+        />
       </div>
     </div>
   );

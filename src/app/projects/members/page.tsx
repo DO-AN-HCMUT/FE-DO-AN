@@ -1,18 +1,18 @@
 'use client';
 
-import { Modal, Box, Typography, Button as MuiButton } from '@mui/material';
+import { Modal, Box, Typography } from '@mui/material';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 
+import AddMemberModal from '@/components/AddMemberModal';
 import Button from '@/components/Button';
 import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
-import TextInput from '@/components/TextInput';
+import { Spinner } from '@/components/Spinner';
 import User from '@/components/User';
 import ProjectService from '@/services/project';
-import { isValidEmail } from '@/utils/common';
 
 import { GetAllUserDto, GetProjectByIdDto } from '@/types/project';
 
@@ -21,37 +21,23 @@ export default function MemberPage() {
   const [project, setProject] = useState<GetProjectByIdDto>();
   const [members, setMembers] = useState<GetAllUserDto>();
   const [search, setSearch] = useState('');
-  const [newMemberEmails, setNewMemberEmails] = useState<string[]>([]);
-  const [emailInput, setEmailInput] = useState('');
   const [deletingMemberId, setDeletingMemberId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const searchParams = useSearchParams();
   const projectId = searchParams.get('projectId')!;
 
   const fetchMembers = useCallback(async () => {
+    setIsLoading(true);
     const response = await ProjectService.getProjectById(projectId);
     setProject(response);
     setMembers(await ProjectService.getAllUsers(projectId));
+    setIsLoading(false);
   }, [projectId]);
 
   useEffect(() => {
     fetchMembers();
   }, [fetchMembers]);
-
-  const handleAddMember = async () => {
-    if (newMemberEmails.length === 0) return;
-
-    try {
-      await ProjectService.addMembers(projectId, newMemberEmails);
-      setNewMemberEmails([]);
-      await fetchMembers();
-      setIsAdding(false);
-      toast.success('Members added successfully');
-    } catch (error) {
-      console.error(error);
-      toast.error('Failed to add members');
-    }
-  };
 
   const handleDeleteMember = async () => {
     if (!deletingMemberId) return;
@@ -67,7 +53,12 @@ export default function MemberPage() {
     }
   };
 
-  if (!project || !members) return null;
+  if (!project || !members || isLoading)
+    return (
+      <div className='flex h-screen w-full items-center justify-center'>
+        <Spinner size='lg' />
+      </div>
+    );
 
   return (
     <>
@@ -163,94 +154,18 @@ export default function MemberPage() {
                         </td>
                       </tr>
                     ))}
-                  <Modal
-                    open={isAdding}
-                    onClose={() => {
-                      setIsAdding(false);
-                      setNewMemberEmails([]);
-                      setEmailInput('');
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        width: 400,
-                        bgcolor: 'background.paper',
-                        border: '2px solid #000',
-                        boxShadow: 24,
-                        p: 4,
+
+                  {isAdding && (
+                    <AddMemberModal
+                      isAdding={isAdding}
+                      onClose={() => {
+                        setIsAdding(false);
                       }}
-                    >
-                      <Typography id='modal-modal-title' variant='h5' component='h1'>
-                        Add Member
-                      </Typography>
-                      <div className='flex w-full flex-col items-stretch justify-between pt-5'>
-                        <div className='mb-5 flex grow flex-col justify-center'>
-                          <p className='mb-2 ps-1 font-semibold'>Member Email</p>
-                          <TextInput
-                            placeholder='Enter email'
-                            value={emailInput}
-                            onInput={(email) => {
-                              if (email[email.length - 1] === ' ' && isValidEmail(email.trim())) {
-                                setNewMemberEmails([...newMemberEmails, email.trim()]);
-                                setEmailInput('');
-                              } else setEmailInput(email);
-                            }}
-                            inputProps={{
-                              onKeyPress: (e) => {
-                                if (e.key === 'Enter' && isValidEmail(emailInput)) {
-                                  setNewMemberEmails([...newMemberEmails, emailInput]);
-                                  setEmailInput('');
-                                }
-                              },
-                            }}
-                            type='text'
-                          />
-                        </div>
-                        {newMemberEmails.length > 0 && (
-                          <div className='mb-5'>
-                            <h4 className='mb-3 ps-1 font-semibold'>Selected Members</h4>
-                            <div className='max-h-[140px] overflow-auto'>
-                              {newMemberEmails.map((email, index) => (
-                                <div key={email} className='group mb-2 flex justify-between pe-5 ps-2'>
-                                  <User name={email} />
-                                  <div
-                                    onClick={() =>
-                                      setNewMemberEmails(newMemberEmails.filter((email, i) => i !== index))
-                                    }
-                                    className='hidden text-red hover:cursor-pointer group-hover:block'
-                                  >
-                                    &#10005;
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                        <div className='flex flex-row justify-between self-end'>
-                          <MuiButton
-                            className='me-4 border-[1px] border-primary bg-white text-primary hover:bg-rose-500 hover:text-white'
-                            onClick={() => setIsAdding(false)}
-                          >
-                            Cancel
-                          </MuiButton>
-                          <MuiButton
-                            className='bg-primary text-white hover:bg-primary-dark'
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleAddMember();
-                            }}
-                            type='submit'
-                          >
-                            Submit
-                          </MuiButton>
-                        </div>
-                      </div>
-                    </Box>
-                  </Modal>
+                      projectId={projectId}
+                      onAddMemberSuccess={fetchMembers}
+                    />
+                  )}
+
                   <Modal
                     open={!!deletingMemberId}
                     onClose={() => {
@@ -274,24 +189,19 @@ export default function MemberPage() {
                         Removing Member
                       </Typography>
                       <div className='flex w-full flex-col items-stretch justify-between pt-5'>
-                        <p>Are you sure? This action is not reversible.</p>
-                        <div className='flex flex-row justify-between self-end'>
-                          <MuiButton
-                            className='me-4 border-[1px] border-primary bg-white text-primary hover:bg-rose-500 hover:text-white'
-                            onClick={() => setDeletingMemberId(null)}
-                          >
+                        <p className='mb-5'>Are you sure? This action is not reversible.</p>
+                        <div className='flex flex-row justify-between space-x-2 self-end'>
+                          <Button type='neutral-positive' onClick={() => setDeletingMemberId(null)}>
                             Cancel
-                          </MuiButton>
-                          <MuiButton
-                            className='bg-primary text-white hover:bg-primary-dark'
-                            onClick={(e) => {
-                              e.stopPropagation();
+                          </Button>
+                          <Button
+                            onClick={() => {
                               handleDeleteMember();
                             }}
-                            type='submit'
+                            type='negative'
                           >
                             Delete
-                          </MuiButton>
+                          </Button>
                         </div>
                       </div>
                     </Box>

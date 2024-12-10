@@ -9,7 +9,7 @@ const config: Config = {
         primary: '#135D66',
         'primary-dark': '#0b363b',
         'primary-bright': '#1b8491',
-        disabled: '#63d4e2',
+        disabled: '#1b8591',
         red: '#db4437',
         green: '#0f9d58',
       },

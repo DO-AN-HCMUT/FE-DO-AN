@@ -25,7 +25,7 @@ export default function Button({
   const buttonClass = clsx(
     width === 'full' && 'w-full',
     isDisabled
-      ? 'bg-disabled text-white'
+      ? 'bg-disabled text-white cursor-not-allowed'
       : type === 'positive'
         ? 'bg-primary text-white hover:bg-primary-dark'
         : type === 'negative'
@@ -33,7 +33,7 @@ export default function Button({
           : type === 'neutral-positive'
             ? 'border-[1px] border-primary bg-white text-primary hover:bg-primary hover:text-white'
             : type === 'neutral-negative' && 'border-[1px] border-red bg-white text-red hover:bg-red hover:text-white',
-    'rounded-lg px-4 py-2 transition-all select-none',
+    'rounded-lg px-2 py-1.5 transition-all select-none',
     className,
   );
 

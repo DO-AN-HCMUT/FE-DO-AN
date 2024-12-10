@@ -10,9 +10,18 @@ type UserProps = {
   isDisplayName?: boolean;
   deleteIcon?: boolean;
   onDelete?: () => void;
+  isNameBold?: boolean;
 };
 
-export default function User({ name, avatar, className, deleteIcon, onDelete, isDisplayName = true }: UserProps) {
+export default function User({
+  name,
+  avatar,
+  className,
+  deleteIcon,
+  onDelete,
+  isDisplayName = true,
+  isNameBold = false,
+}: UserProps) {
   return (
     <div title={!isDisplayName ? name : ''} className={clsx('group relative flex items-center', className)}>
       {avatar ? (
@@ -29,7 +38,7 @@ export default function User({ name, avatar, className, deleteIcon, onDelete, is
             .join('')}
         </div>
       )}
-      {isDisplayName && <span className='ms-2'>{name}</span>}
+      {isDisplayName && <span className={`ms-2 ${isNameBold ? 'font-[500]' : ''}`}>{name}</span>}
       {deleteIcon && (
         <button
           onClick={onDelete}

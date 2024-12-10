@@ -118,7 +118,7 @@ export default function TaskPage() {
     [tasks, sortField, sortType, search],
   );
 
-  if (!project || !processedTasks || !memberOptions || isLoading)
+  if (!project || !processedTasks || !tasks || !memberOptions || isLoading)
     return (
       <div className='flex h-screen w-full items-center justify-center'>
         <Spinner size='lg' />
@@ -179,7 +179,7 @@ export default function TaskPage() {
             </div>
 
             {/* TASKS */}
-            <div className='self-center overflow-auto pb-5'>
+            <div className='flex-grow self-center overflow-auto pb-5'>
               {processedTasks.length > 0 || isAdding ? (
                 <table className='w-full table-fixed border-collapse'>
                   <thead>
@@ -302,13 +302,16 @@ export default function TaskPage() {
                             <td className='px-4 text-center'>{task.status && <TaskStatus status={task.status} />}</td>
                             <td className='px-4'>{task.endDate ? dayjs(task.endDate).format('DD/MM/YYYY') : ''}</td>
                           </tr>
-                          <TasksModal
-                            isOpenModal={task._id === editingTaskId}
-                            onClose={() => setEditingTaskId(undefined)}
-                            task={task}
-                            updateSuccessCallback={fetchTasks}
-                            memberOptions={memberOptions}
-                          />
+                          {task._id === editingTaskId && (
+                            <TasksModal
+                              isOpenModal={task._id === editingTaskId}
+                              onClose={() => setEditingTaskId(undefined)}
+                              task={task}
+                              updateSuccessCallback={fetchTasks}
+                              memberOptions={memberOptions}
+                              isMeLeader={project.isMeLeader}
+                            />
+                          )}
                         </>
                       );
                     })}
@@ -317,7 +320,11 @@ export default function TaskPage() {
               ) : (
                 <div className='mt-20 flex w-full flex-col items-center'>
                   <Image src='/images/no-task.png' alt='no-task' width={200} height={200} className='mb-3' />
-                  <p className='text-lg'>There are no task in this project. Add task now!</p>
+                  <p className='text-lg'>
+                    {tasks.length === 0
+                      ? 'There are no task in this project. Add task now!'
+                      : 'There is no task that matches your query.'}
+                  </p>
                 </div>
               )}
             </div>

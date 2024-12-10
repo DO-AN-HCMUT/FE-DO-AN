@@ -13,14 +13,15 @@ import { Spinner } from '@/components/Spinner';
 import User from '@/components/User';
 import { COLOR_PAIRS, TASK_STATUS_COLOR } from '@/constants/common';
 import api from '@/services/api';
-import taskService from '@/services/task';
-import userService from '@/services/user';
+import TaskService from '@/services/task';
+import UserService from '@/services/user';
 import { hashStringToRange } from '@/utils/common';
 import getStatusString from '@/utils/get-status-string';
 import storage from '@/utils/storage';
 
 import { GetAllProjectDto } from '@/types/project';
 import { GetMyTaskDto } from '@/types/task';
+import { TaskStatus } from '@/types/task-status';
 
 dayjs.extend(isBetween);
 
@@ -53,16 +54,21 @@ export default function MePage() {
 
   useEffect(() => {
     (async () => {
-      setTasks(await taskService.getMyTasks());
-      setProjects(await userService.getMyProjects());
+      setTasks(await TaskService.getMyTasks());
+      setProjects(await UserService.getMyProjects());
       setIsLoading(false);
     })();
   }, []);
 
   if (!isAuthStatusReady || !tasks || !projects) return null;
 
-  const dueTasks = tasks.filter((task) => dayjs(task.endDate).isSame(dayjs(), 'day'));
-  const thisWeekTasks = tasks.filter((task) => dayjs(task.endDate).isBetween(dayjs(), dayjs().add(7, 'day')));
+  const dueTasks = tasks.filter(
+    (task) => task.status !== TaskStatus.DONE && dayjs(task.endDate).isSame(dayjs(), 'day'),
+  );
+  const thisWeekTasks = tasks.filter(
+    (task) =>
+      task.status !== TaskStatus.DONE && dayjs(task.endDate).isBetween(dayjs().add(1, 'day'), dayjs().add(7, 'day')),
+  );
 
   const dueTasksToDisplay = dueTasks?.slice(0, 3);
   const remainingDueTasksCount = dueTasks?.length - 3;
@@ -72,7 +78,7 @@ export default function MePage() {
       {/* HEADER */}
       <Header />
       {/* BODY */}
-      <div className='flex flex-grow overflow-hidden'>
+      <div className='flex h-screen flex-grow overflow-hidden'>
         <Sidebar />
         {/* CONTENT */}
         <div className='flex w-11/12 items-stretch bg-[#eee] p-5'>
@@ -86,14 +92,14 @@ export default function MePage() {
               ) : dueTasks.length > 0 ? (
                 <div className='px-3'>
                   <div className='mb-4 flex'>
-                    <div className='flex-[1] font-semibold text-primary'>ID</div>
+                    <div className='flex-[1] font-semibold text-primary'>Key</div>
                     <div className='flex-[3] font-semibold text-primary'>Name</div>
                     <div className='flex-[1.5] font-semibold text-primary'>Status</div>
                     <div className='flex-[1.2] font-semibold text-primary'>Deadline</div>
                     <div className='flex-[2] font-semibold text-primary'>Project</div>
                   </div>
                   {dueTasksToDisplay.map((task) => (
-                    <div key={task._id} className='item-center mb-3 flex'>
+                    <div key={task._id} className='item-center mb-5 flex'>
                       <div className='flex-[1]'>{task.key}</div>
                       <div className='flex-[3]'>{task.title}</div>
                       <div className='flex-[1.5]'>
@@ -123,7 +129,7 @@ export default function MePage() {
                 </div>
               )}
             </div>
-            <div className='mt-2 flex flex-col overflow-hidden rounded-2xl border-[1px] bg-white p-5'>
+            <div className='mt-2 flex flex-grow flex-col overflow-hidden rounded-2xl border-[1px] bg-white p-5'>
               <h3 className='mb-5 text-3xl font-bold text-primary'>My Projects</h3>
               {isLoading ? (
                 <div className='flex flex-grow flex-col items-center justify-center'>
@@ -191,7 +197,7 @@ export default function MePage() {
                           style={TASK_STATUS_COLOR[task.status]}
                           className='inline rounded-3xl border-[1px] border-[#ccc] px-3 py-1'
                         >
-                          {task.status}
+                          {getStatusString(task.status)}
                         </div>
                       </div>
                       <div>Deadline: {dayjs(task.endDate).format('DD/MM/YYYY')}</div>

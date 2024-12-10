@@ -31,7 +31,12 @@ const deleteMembers = async (projectId: string, memberIds: string[]) => {
   return (await api.put<Response<void>>(`${BASE_URL}/${projectId}/members`, { memberIds })).data.payload;
 };
 
+const addProject = async (payload: { name: string; key: string; description?: string }) => {
+  return (await api.post<Response<void>>(`${BASE_URL}/new`, payload)).data.payload;
+};
+
 const ProjectService = {
+  addProject,
   getProjectById,
   getAllTasksByProjectId,
   getAllUsers,
