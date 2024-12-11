@@ -115,7 +115,7 @@ export default function CreateProjectModal({ isAdding, onClose, onSubmitSuccess 
               <textarea
                 placeholder='Describe your project'
                 value={description}
-                onInput={(e) => setDescription(e.target.value)}
+                onInput={(e) => setDescription(e.currentTarget.value)}
                 className='h-20 w-full rounded-lg border-[1px] border-[#616161] p-3 placeholder:text-[#616161] '
               />
             </div>
