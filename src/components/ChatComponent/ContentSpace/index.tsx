@@ -54,7 +54,10 @@ export default function ContentSpace(props: ContentSpaceProps) {
     }
   };
   const handleClick = () => {
-    setNewMessage({ userID: sender, content: message });
+    setNewMessage({ userID: sender, content: message.trim() });
+    if (socket.connected) {
+      socket.emit('message', { socketID: sender, content: message.trim() });
+    }
     // if (currentUser.filter((item: any) => item.socketName === receiver).length > 0) {
     //   socket.emit('message', { socketID: sender, content: message });
     // }
@@ -79,13 +82,15 @@ export default function ContentSpace(props: ContentSpaceProps) {
                       {item.content}
                     </div>
                   </div>
-                ) : (
+                ) : item.userID === sender ? (
                   <div className='flex flex-row-reverse  '>
                     <Avatar>me</Avatar>
                     <div className=' mx-1 w-5/12 overflow-auto  rounded-lg border-2 border-solid border-gray-200 bg-teal-200 p-2'>
                       {item.content}
                     </div>
                   </div>
+                ) : (
+                  <></>
                 )}
               </div>
             ))
