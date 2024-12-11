@@ -55,7 +55,7 @@ export default function Sidebar() {
         href='/chat'
       >
         <Image src='/images/sideBar/message.png' alt='message' width={20} height={20} className='me-3' />
-        <p className='hidden md:inline'>Messages</p>
+        <p className='hidden md:inline'>Messagess</p>
       </Link>
     </div>
   );
