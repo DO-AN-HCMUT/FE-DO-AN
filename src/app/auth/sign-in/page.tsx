@@ -106,8 +106,7 @@ export default function SignIn() {
           <Button onClick={() => handleOAuth()} className='w-full gap-1'>
             <Google /> Continue with Google
           </Button>
-        </div>{' '} */}
-        *
+        </div> */}
       </div>
     </div>
   );

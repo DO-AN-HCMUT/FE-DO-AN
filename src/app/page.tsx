@@ -8,7 +8,6 @@ import { redirect } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import Header from '@/components/Header';
-// eslint-disable-next-line import/no-unresolved
 import Sidebar from '@/components/Sidebar';
 import { Spinner } from '@/components/Spinner';
 import User from '@/components/User';
