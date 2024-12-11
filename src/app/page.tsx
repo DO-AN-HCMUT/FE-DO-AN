@@ -148,7 +148,7 @@ export default function MePage() {
                           <h5 className='me-3 border-s-4 border-primary ps-2 text-2xl font-semibold'>{project.name}</h5>
                           <h6 className='text-lg font-bold text-primary'>({project.key})</h6>
                         </div>
-                        <User name={project.leader.fullName} avatar={project.leader.avatar} />
+                        <User name={project?.leader.fullName} avatar={project.leader.avatar} />
                       </div>
                       <p className='mb-5 font-light'>{project.description}</p>
                       <div className='flex space-x-1'>
