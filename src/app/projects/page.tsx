@@ -62,7 +62,7 @@ export default function Projects() {
         {/* HEADER */}
         <Header />
         {/* BODY */}
-        <div className='flex h-screen flex-row  '>
+        <div className='flex h-screen flex-row'>
           <Sidebar />
           <div className='flex flex-grow flex-col items-start p-10'>
             <h2 className='mb-5 text-3xl font-bold text-primary'>Projects</h2>

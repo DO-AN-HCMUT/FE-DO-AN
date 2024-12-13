@@ -7,7 +7,7 @@ export default function Sidebar() {
   const projectId = searchParams.get('projectId')!;
 
   return (
-    <div className='h-full min-w-[20px] cursor-pointer border-r-[1px] border-[#ccc] px-2 py-4 '>
+    <div className='h-full min-w-[200px] cursor-pointer border-r-[1px] border-[#ccc] px-2 py-4'>
       <Link
         className='mb-3 flex items-center justify-center rounded-lg px-4 py-2 transition-all duration-100 hover:bg-primary hover:text-white md:justify-normal'
         href='/'
