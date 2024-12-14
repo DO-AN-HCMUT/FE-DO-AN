@@ -67,17 +67,18 @@ export default function AddMemberModal({ projectId, isAdding, onClose, onAddMemb
               placeholder='Enter email'
               value={emailInput}
               onInput={async (input) => {
-                const email = input.trim();
-                if (email[email.length - 1] === ' ' && isValidEmail(email) && !users.find((u) => u.email === email)) {
-                  try {
-                    setIsMemberLoading(true);
-                    const response = await UserService.getUserByEmail(email);
-                    setUsers([...users, response]);
-                    setEmailInput('');
-                    setIsMemberLoading(false);
-                  } catch (e) {
-                    console.error(e);
-                  }
+                if (input[input.length - 1] === ' ') {
+                  const email = input.trim();
+                  if (isValidEmail(email) && !users.find((u) => u.email === email))
+                    try {
+                      setIsMemberLoading(true);
+                      const response = await UserService.getUserByEmail(email);
+                      setUsers([...users, response]);
+                      setEmailInput('');
+                      setIsMemberLoading(false);
+                    } catch (e) {
+                      console.error(e);
+                    }
                 } else setEmailInput(input);
               }}
               inputProps={{
