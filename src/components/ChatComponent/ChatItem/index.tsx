@@ -12,7 +12,7 @@ type ChatItemProps = {
   onClickMethod: any;
   deleteMethod: any;
   isSelect: boolean;
-  currentUser: any;
+  currentUser?: any;
 };
 export default function ChatItem(props: ChatItemProps) {
   const [profile, setProfile] = useState<any>('');

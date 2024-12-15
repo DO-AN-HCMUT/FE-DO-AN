@@ -14,17 +14,15 @@ import api from '@/services/api';
 export default function Confirm() {
   const searchParams = useSearchParams();
   const [isError, setIsError] = useState<boolean>(false);
+  const invitationId = searchParams.get('invitationId');
   const projectName = searchParams.get('projectName');
-  const projectId = searchParams.get('projectId');
-  const memberId = searchParams.get('memberId');
-
   const router = useRouter();
   const goHome = () => {
-    router.push('/');
+    router.replace('/');
   };
   const addMember = async () => {
     try {
-      await api.post(`/project/${projectId}/verify?memberId=${memberId}`);
+      await api.post(`/project/verify?invitationId=${invitationId}`);
       setIsError(false);
       toast.success('Success', { position: 'bottom-center' });
     } catch (error: any) {
@@ -34,6 +32,7 @@ export default function Confirm() {
       } else {
         toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
       }
+      // router.replace('/auth/sign-in');
     }
   };
 
