@@ -20,7 +20,7 @@ export default function Chat() {
   const [isDelete, setIsDelete] = useState<boolean>(false);
   const [isSelectedItem, setIsSelectedItem] = useState<number>(-1);
   // let currentUser: any = [];
-  const [currentUser, setCurrentUser] = useState<any>([]);
+  // const [currentUser, setCurrentUser] = useState<any>([]);
   const socket = io(process.env.NEXT_PUBLIC_API_URL as string, {
     reconnection: false,
   });
@@ -29,13 +29,12 @@ export default function Chat() {
     socket.auth = { username: conservation?.sender };
 
     socket.on('users', (users) => {
-      setCurrentUser(users.filter((item: any) => item.socketName !== conservation.sender));
-
-      // put the current user first, and then sort by username
+      // setCurrentUser(users.filter((item: any) => item.socketName !== conservation.sender));
+      console.log(users);
     });
+    socket.off('users');
   } else {
-    socket.off();
-    socket.close();
+    socket.disconnect();
   }
 
   const clickDelete = async (id: string) => {
@@ -106,7 +105,6 @@ export default function Chat() {
                     setSelectedValue(item);
                   }}
                   isSelect={isSelectedItem === index}
-                  currentUser={currentUser}
                 />
               ))}
             </div>
