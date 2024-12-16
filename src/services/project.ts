@@ -10,8 +10,12 @@ const getProjectById = async (id: string) => {
   return (await api.get<Response<GetProjectByIdDto>>(`${BASE_URL}/${id}/get`)).data.payload;
 };
 
-const getAllTasksByProjectId = async (id: string) => {
-  return (await api.get<Response<Task[]>>(`${BASE_URL}/${id}/tasks`)).data.payload;
+const getAllTasksByProjectId = async (id: string, registeredMemberId?: string) => {
+  return (
+    await api.get<Response<Task[]>>(`${BASE_URL}/${id}/tasks`, {
+      params: { registeredMemberId },
+    })
+  ).data.payload;
 };
 
 const getAllUsers = async (projectId: string, search?: string) => {
