@@ -173,7 +173,10 @@ export default function Projects() {
           onClose={() => {
             setIsAdding(false);
           }}
-          onSubmitSuccess={fetchData}
+          onSubmitSuccess={() => {
+            setIsAdding(false);
+            fetchData();
+          }}
         />
       </div>
     </div>

@@ -141,7 +141,7 @@ export default function MePage() {
                     <Link
                       href={`/projects/tasks?projectId=${project._id}`}
                       key={project._id}
-                      className='mb-4 block rounded-lg border-[1px] border-[#ccc] px-6 py-4 shadow transition-all duration-100 hover:scale-105'
+                      className='mb-4 block rounded-lg border-[1px] border-[#ccc] px-6 py-4 shadow transition-all duration-100 hover:scale-[1.01]'
                     >
                       <div className='mb-5 flex items-center justify-between'>
                         <div className='flex items-center'>

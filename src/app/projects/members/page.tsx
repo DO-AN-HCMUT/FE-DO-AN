@@ -1,6 +1,6 @@
 'use client';
 
-import { Modal, Box, Typography } from '@mui/material';
+import { Modal } from '@mui/material';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
@@ -8,6 +8,7 @@ import toast from 'react-hot-toast';
 
 import AddMemberModal from '@/components/AddMemberModal';
 import Button from '@/components/Button';
+import DeleteMemberModalContent from '@/components/DeleteMemberModalContent';
 import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
 import { Spinner } from '@/components/Spinner';
@@ -21,7 +22,7 @@ export default function MemberPage() {
   const [project, setProject] = useState<GetProjectByIdDto>();
   const [members, setMembers] = useState<GetAllUserDto>();
   const [search, setSearch] = useState('');
-  const [deletingMemberId, setDeletingMemberId] = useState<string | null>(null);
+  const [deletingMemberId, setDeletingMemberId] = useState<string>();
   const [isLoading, setIsLoading] = useState(true);
 
   const searchParams = useSearchParams();
@@ -45,7 +46,7 @@ export default function MemberPage() {
     try {
       await ProjectService.deleteMembers(projectId, [deletingMemberId]);
       await fetchMembers();
-      setDeletingMemberId(null);
+      setDeletingMemberId(undefined);
       toast.success('Member deleted successfully');
     } catch (error) {
       console.error(error);
@@ -169,42 +170,16 @@ export default function MemberPage() {
                   <Modal
                     open={!!deletingMemberId}
                     onClose={() => {
-                      setDeletingMemberId(null);
+                      setDeletingMemberId(undefined);
                     }}
                   >
-                    <Box
-                      sx={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        width: 400,
-                        bgcolor: 'background.paper',
-                        border: '2px solid #000',
-                        boxShadow: 24,
-                        p: 4,
+                    <DeleteMemberModalContent
+                      onDeleteMember={handleDeleteMember}
+                      deletingMemberId={deletingMemberId}
+                      onClose={() => {
+                        setDeletingMemberId(undefined);
                       }}
-                    >
-                      <Typography id='modal-modal-title' variant='h5' component='h1'>
-                        Removing Member
-                      </Typography>
-                      <div className='flex w-full flex-col items-stretch justify-between pt-5'>
-                        <p className='mb-5'>Are you sure? This action is not reversible.</p>
-                        <div className='flex flex-row justify-between space-x-2 self-end'>
-                          <Button type='neutral-positive' onClick={() => setDeletingMemberId(null)}>
-                            Cancel
-                          </Button>
-                          <Button
-                            onClick={() => {
-                              handleDeleteMember();
-                            }}
-                            type='negative'
-                          >
-                            Delete
-                          </Button>
-                        </div>
-                      </div>
-                    </Box>
+                    />
                   </Modal>
                 </tbody>
               </table>

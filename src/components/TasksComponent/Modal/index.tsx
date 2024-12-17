@@ -286,6 +286,7 @@ export default function TasksModal({
                     <InputLabel>Assignee</InputLabel>
                     <Select
                       label='Members'
+                      disabled={!isMeLeader}
                       multiple
                       value={task.registeredMembers.map((user) => user._id)}
                       onChange={(value) =>
