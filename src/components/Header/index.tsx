@@ -51,7 +51,7 @@ export default function Header({ socket }: HeaderProps) {
           <div className='relative size-full cursor-pointer rounded-full p-1 hover:bg-[#135d66]'>
             <Image src='/images/header/bell.png' alt='notification' width={32} height={32} className='' />
             {notReadNotifications && notReadNotifications.length > 0 && (
-              <div className='absolute right-0 top-0 flex aspect-square w-5 items-center justify-center rounded-full bg-red text-[8px] text-white'>
+              <div className='absolute right-0 top-0 flex aspect-square w-5 animate-bounce items-center justify-center rounded-full bg-red text-[8px] text-white'>
                 {notReadNotifications.length}
               </div>
             )}
@@ -63,7 +63,19 @@ export default function Header({ socket }: HeaderProps) {
             >
               <div className='flex justify-between border-b-[1px] px-5 py-4'>
                 <h4 className='text-lg font-bold text-primary'>Notifications</h4>
-                <button className='text-primary-bright hover:underline'>Mark all as read</button>
+                <button
+                  onClick={() => {
+                    setNotifications(
+                      notifications?.map((notification) => {
+                        return { ...notification, isRead: true };
+                      }),
+                    );
+                    NotificationService.markAllAsRead();
+                  }}
+                  className='text-primary-bright hover:underline'
+                >
+                  Mark all as read
+                </button>
               </div>
               <div className='flex-grow overflow-auto'>
                 {notifications ? (
@@ -71,6 +83,18 @@ export default function Header({ socket }: HeaderProps) {
                     <div
                       key={notification._id}
                       className='relative flex cursor-pointer justify-between py-3 pe-5 ps-10 transition-all duration-75 hover:bg-slate-200'
+                      onMouseLeave={() => {
+                        if (notification.isRead) return;
+                        setNotifications(
+                          notifications?.map((n) => {
+                            if (n._id === notification._id) {
+                              return { ...n, isRead: true };
+                            }
+                            return n;
+                          }),
+                        );
+                        NotificationService.readById(notification._id);
+                      }}
                     >
                       <div className='flex'>
                         <div className='me-4 pt-1'>
@@ -87,7 +111,9 @@ export default function Header({ socket }: HeaderProps) {
                         />
                       </div>
                       <p className='text-nowrap text-xs font-light'>{dayjs(notification.createdAt).fromNow()}</p>
-                      <div className='absolute left-5 top-[calc(50%-8px)] size-2 rounded-full bg-primary-bright'></div>
+                      {!notification.isRead && (
+                        <div className='absolute left-5 top-[calc(50%-8px)] size-2 rounded-full bg-primary-bright'></div>
+                      )}
                     </div>
                   ))
                 ) : (
