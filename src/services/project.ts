@@ -28,7 +28,7 @@ const createTask = async (projectId: string, payload: CreateTaskRequestDto) => {
 };
 
 const addMembers = async (projectId: string, memberEmails: string[]) => {
-  await api.post<Response<void>>(`${BASE_URL}/${projectId}/sendInvitation`, { guestMail: memberEmails });
+  await api.get<Response<void>>(`${BASE_URL}/${projectId}/sendInvitation`, { guestMail: memberEmails });
   return (await api.post<Response<void>>(`${BASE_URL}/${projectId}/addMembers`, { memberEmails })).data.payload;
 };
 
