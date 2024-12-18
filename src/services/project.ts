@@ -28,6 +28,7 @@ const createTask = async (projectId: string, payload: CreateTaskRequestDto) => {
 };
 
 const addMembers = async (projectId: string, memberEmails: string[]) => {
+  await api.post<Response<void>>(`${BASE_URL}/${projectId}/sendInvitation`, { guestMail: memberEmails });
   return (await api.post<Response<void>>(`${BASE_URL}/${projectId}/addMembers`, { memberEmails })).data.payload;
 };
 
@@ -38,7 +39,6 @@ const deleteMembers = async (projectId: string, memberIds: string[]) => {
 const addProject = async (payload: { name: string; key: string; description?: string }) => {
   return (await api.post<Response<void>>(`${BASE_URL}/new`, payload)).data.payload;
 };
-
 const ProjectService = {
   addProject,
   getProjectById,

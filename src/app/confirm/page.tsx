@@ -2,7 +2,6 @@
 
 import { Button } from '@mui/material';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -29,11 +28,7 @@ export default function Confirm() {
       toast.success('Success', { position: 'bottom-center' });
     } catch (error: any) {
       setIsError(true);
-      if (error?.response?.data?.message === 'TokenExpiredError') {
-        toast.error('Please sign in', { position: 'bottom-center' });
-      } else {
-        toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
-      }
+      toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
       // router.replace('/auth/sign-in');
     }
   };
@@ -61,14 +56,8 @@ export default function Confirm() {
             </div>
           ) : (
             <div>
-              You do not log in so please{' '}
-              <Link
-                className='mx-1 text-sky-500 underline decoration-sky-500 underline-offset-2'
-                href={'/auth/sign-in'}
-              >
-                sign in
-              </Link>
-              and return this page
+              There is a problem so please contact with us via mail
+              <span className='text-sky-500 underline decoration-sky-500'>mail@gmail.com</span>
             </div>
           )}
         </div>
