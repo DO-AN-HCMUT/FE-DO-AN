@@ -1,5 +1,6 @@
 'use client';
 
+import { Modal, Box, Typography } from '@mui/material';
 import dayjs from 'dayjs';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -31,7 +32,8 @@ export default function TaskPage() {
   const [search, setSearch] = useState('');
   const [memberOptions, setMemberOptions] = useState<UserType[]>();
   const [sortType, setSortType] = useState<number>(1);
-  const [sortField, setSortField] = useState<string>();
+  const [sortField, setSortField] = useState<string>('key');
+  const [isShowDeleteModal, setIsShowDeleteModal] = useState(false);
 
   const handleDelete = async () => {
     try {
@@ -155,7 +157,7 @@ export default function TaskPage() {
                   type='negative'
                   className='mb-5'
                   onClick={() => {
-                    handleDelete();
+                    setIsShowDeleteModal(true);
                   }}
                 >
                   Delete This Project
@@ -331,6 +333,36 @@ export default function TaskPage() {
           </div>
         </div>
       </div>
+      <Modal open={isShowDeleteModal} onClose={() => setIsShowDeleteModal(false)}>
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 600,
+            bgcolor: 'background.paper',
+            border: '2px solid #000',
+            boxShadow: 24,
+            p: 4,
+          }}
+        >
+          <Typography id='modal-modal-title' variant='h5' component='h1'>
+            Deleting this project?
+          </Typography>
+          <div className='flex w-full flex-col items-stretch justify-between pt-5'>
+            <p className='mb-5'>Are you sure? This action is not reversible.</p>
+            <div className='flex flex-row space-x-2 self-end'>
+              <Button type='neutral-positive' onClick={() => setIsShowDeleteModal(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleDelete} type='negative'>
+                Delete
+              </Button>
+            </div>
+          </div>
+        </Box>
+      </Modal>
     </>
   );
 }
