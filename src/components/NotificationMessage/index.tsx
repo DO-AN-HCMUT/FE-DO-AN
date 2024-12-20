@@ -58,6 +58,16 @@ export default function NotificationMessage({ type, authorName, target }: Notifi
         </div>
       );
 
+    case NotificationEnum.TASK_OVERDUE:
+      return (
+        <div>
+          <p>You have an overdue task</p>
+          <Link href={`/projects/tasks?projectId=${target.projectId}`}>
+            <p className='text-nowrap font-semibold text-primary hover:text-primary/85'>{`[${target.key}] ${target.title}`}</p>
+          </Link>
+        </div>
+      );
+
     case NotificationEnum.PROJECT_INVITE:
       return (
         <div>

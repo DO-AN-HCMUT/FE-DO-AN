@@ -1,5 +1,6 @@
 'use client';
 
+import InfoIcon from '@mui/icons-material/Info';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import Image from 'next/image';
@@ -82,7 +83,7 @@ export default function Header({ socket }: HeaderProps) {
                   notifications.map((notification) => (
                     <div
                       key={notification._id}
-                      className='relative flex cursor-pointer justify-between py-3 pe-5 ps-10 transition-all duration-75 hover:bg-slate-200'
+                      className={`relative flex cursor-pointer justify-between py-3 pe-5 ${notification.isRead ? 'ps-5' : 'ps-10'} transition-all duration-75 hover:bg-slate-200`}
                       onMouseLeave={() => {
                         if (notification.isRead) return;
                         setNotifications(
@@ -98,14 +99,24 @@ export default function Header({ socket }: HeaderProps) {
                     >
                       <div className='flex'>
                         <div className='me-4 pt-1'>
-                          <User
-                            name={notification.author.fullName}
-                            avatar={notification.author.avatar}
-                            isDisplayName={false}
-                          />
+                          {notification.author ? (
+                            <User
+                              name={notification.author.fullName}
+                              avatar={notification.author.avatar}
+                              isDisplayName={false}
+                            />
+                          ) : (
+                            <InfoIcon
+                              color='warning'
+                              sx={{
+                                width: 34,
+                                height: 34,
+                              }}
+                            />
+                          )}
                         </div>
                         <NotificationMessage
-                          authorName={notification.author.fullName}
+                          authorName={notification.author?.fullName}
                           target={notification.target}
                           type={notification.type}
                         />
