@@ -13,10 +13,6 @@ export const TASK_STATUS_COLOR: { [key in TaskStatusType]: { backgroundColor: st
     backgroundColor: '#79F2C0',
     color: '#00875A',
   },
-  [TaskStatus.OVERDUE]: {
-    backgroundColor: '#FFC0CB',
-    color: '#FF0000',
-  },
 };
 
 export const COLOR_PAIRS = [

@@ -1,6 +1,6 @@
 'use client';
 
-import { Modal, Box, Typography } from '@mui/material';
+import { Modal, Box, Typography, Tooltip } from '@mui/material';
 import dayjs from 'dayjs';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -302,7 +302,33 @@ export default function TaskPage() {
                               </div>
                             </td>
                             <td className='px-4 text-center'>{task.status && <TaskStatus status={task.status} />}</td>
-                            <td className='px-4'>{task.endDate ? dayjs(task.endDate).format('DD/MM/YYYY') : ''}</td>
+                            <td className='px-4'>
+                              {task.endDate && (
+                                <div className='flex w-[70%] items-center justify-between'>
+                                  <span className='me-2'>{dayjs(task.endDate).format('DD/MM/YYYY')}</span>
+                                  {dayjs(task.endDate).isBefore(dayjs(), 'day') && (
+                                    <Tooltip
+                                      title='This task is overdue'
+                                      style={{ color: 'red' }}
+                                      slotProps={{
+                                        popper: {
+                                          modifiers: [
+                                            {
+                                              name: 'offset',
+                                              options: {
+                                                offset: [0, -12],
+                                              },
+                                            },
+                                          ],
+                                        },
+                                      }}
+                                    >
+                                      <Image src='/icons/warning.svg' alt='warning' width={20} height={20} />
+                                    </Tooltip>
+                                  )}
+                                </div>
+                              )}
+                            </td>
                           </tr>
                           {task._id === editingTaskId && (
                             <TasksModal
