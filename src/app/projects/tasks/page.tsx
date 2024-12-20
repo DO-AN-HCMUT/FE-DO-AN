@@ -293,7 +293,7 @@ export default function TaskPage() {
                                   />
                                 ))}
                                 {exceedUser > 0 && (
-                                  <span className='inline rounded-full bg-gray-300 px-2 py-1 text-black'>
+                                  <span className='inline rounded-full bg-gray-300 px-2 py-1 text-sm text-black'>
                                     +{exceedUser}
                                   </span>
                                 )}
