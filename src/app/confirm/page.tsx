@@ -29,7 +29,7 @@ export default function Confirm() {
     } catch (error: any) {
       setIsError(true);
       toast.error(typeof error?.response?.data == 'object' ? error?.response?.data.message : error?.message);
-      // router.replace('/auth/sign-in');
+      router.replace('/auth/sign-in');
     }
   };
 
@@ -57,7 +57,7 @@ export default function Confirm() {
           ) : (
             <div>
               There is a problem so please contact with us via mail
-              <span className='text-sky-500 underline decoration-sky-500'>mail@gmail.com</span>
+              <span className='ml-1 text-sky-500 underline decoration-sky-500'>mail@gmail.com</span>
             </div>
           )}
         </div>
